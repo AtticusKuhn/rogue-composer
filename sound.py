@@ -2,6 +2,21 @@ import pygame
 import numpy as np
 from constants import *
 
+# Function to generate a sine wave for a given frequency
+def generate_tone(frequency, duration=0.1):
+    # Calculate number of samples
+    samples = int(SAMPLE_RATE * duration)
+    # Generate x values
+    x = np.arange(samples)
+    # Calculate sine wave
+    y = 32767 * 0.5 * np.sin(2 * np.pi * frequency * x / SAMPLE_RATE)
+    # Convert to stereo by duplicating the mono channel
+    stereo_wave = np.tile(y, (2, 1)).T.astype(np.int16)
+    # Ensure contiguity in memory for pygame
+    stereo_wave = np.ascontiguousarray(stereo_wave)
+    # Return stereo wave
+    return stereo_wave 
+
 class SoundManager:
     def __init__(self):
         pygame.mixer.init(frequency=SAMPLE_RATE, size=-16, channels=2, buffer=512)

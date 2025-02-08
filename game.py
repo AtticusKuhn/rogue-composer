@@ -16,6 +16,17 @@ class Game:
         self.platforms = pygame.sprite.Group()
         self.font = pygame.font.Font(None, 36)
 
+        # Note positions (mapping notes to vertical positions)
+        self.note_positions = {
+            'a': SCREEN_HEIGHT - 100,
+            'b': SCREEN_HEIGHT - 120,
+            'c': SCREEN_HEIGHT - 140,
+            'd': SCREEN_HEIGHT - 160,
+            'e': SCREEN_HEIGHT - 180,
+            'f': SCREEN_HEIGHT - 200,
+            'g': SCREEN_HEIGHT - 220,
+        }
+
         self.sound_manager = SoundManager()
 
         # Create ground platform
@@ -62,6 +73,12 @@ class Game:
                 pygame.time.set_timer(pygame.USEREVENT, 0)
                 self.playing_sequence = False
 
+    def draw_note(self, note, position):
+        """Draws a note on the screen."""
+        x = 10 + position * 60  # Horizontal spacing
+        y = self.note_positions.get(note, SCREEN_HEIGHT - 100)  # Default to 'a' position
+        pygame.draw.rect(self.screen, (255, 255, 255), (x, y, 40, 20))
+
     def run(self):
         while True:
             self.handle_events()
@@ -71,10 +88,8 @@ class Game:
             self.all_sprites.draw(self.screen)
 
             # Draw input sequence
-            text = self.font.render(
-                "Sequence: " + " ".join(self.input_sequence), True, (255, 255, 255)
-            )
-            self.screen.blit(text, (10, 10))
+            for i, note in enumerate(self.input_sequence):
+                self.draw_note(note, i)
 
             pygame.display.flip()
             self.clock.tick(60)
