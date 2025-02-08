@@ -89,6 +89,7 @@ class Game:
     def run(self):
         while True:
             self._handle_events()
+            # Update player
             self.player.update(self.platforms)
 
             # Update enemies
@@ -98,21 +99,34 @@ class Game:
             # Handle collisions
             for enemy in self.enemies:
                 if pygame.sprite.collide_rect(self.player, enemy):
-                    if self.player.is_stabbing and not enemy.is_shielding:
+                    if self.player.is_stabbing and not enemy.is_shielding():
                         enemy.health = False  # Enemy takes damage
-                    if enemy.is_stabbing and not self.player.is_shielding:
+                    if enemy.is_stabbing() and not self.player.is_shielding():
                         self.player.health = False # Player takes damage
 
             # Remove dead sprites
-            for sprite in self.all_sprites:
-                if hasattr(sprite, "health") and not sprite.health:
-                    self.all_sprites.remove(sprite)
-                    if sprite in self.enemies:
-                        self.enemies.remove(sprite)
+            dead_sprites = [sprite for sprite in self.all_sprites if hasattr(sprite, "health") and not sprite.health]
+            for sprite in dead_sprites:
+                self.all_sprites.remove(sprite)
+                if sprite in self.enemies:
+                    self.enemies.remove(sprite)
 
+            # Drawing
+            self.screen.fill((0, 0, 0))  # Clear screen
 
-            self.screen.fill((0, 0, 0))
-            self.all_sprites.draw(self.screen)
+            # Draw player
+            self.screen.blit(self.player.image, self.player.rect)
+
+            # Draw enemies
+            for enemy in self.enemies:
+                self.screen.blit(enemy.image, enemy.rect)
+
+            # Draw platforms
+            for platform in self.platforms:
+                self.screen.blit(platform.image, platform.rect)
+
+            #self.all_sprites.draw(self.screen) # No longer needed
+
 
             # Draw input sequence
             for i, note in enumerate(self.input_sequence):
