@@ -15,10 +15,15 @@ a -> go right
 b -> go left
 c -> small jump
 d -> big jump
-e -> block
+e -> block/shield
 f -> parry
-g -> stab
+g -> stab/thrust
 
+C -> Go Right
+D -> Go Left
+E -> Jump
+G -> Stab/thrust
+A -> Block/shield
 
 ## Technical Considerations
 This game will be made in Python, using PyGame

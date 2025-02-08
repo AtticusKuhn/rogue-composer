@@ -1,5 +1,7 @@
 import pygame
 import sys
+import math
+import numpy as np
 
 # Initialize PyGame
 pygame.init()
@@ -64,7 +66,20 @@ class Game:
         self.clock = pygame.time.Clock()
         self.all_sprites = pygame.sprite.Group()
         self.platforms = pygame.sprite.Group()
+        self.font = pygame.font.Font(None, 36)
         
+        # Initialize sound system with stereo output
+        pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
+        self.note_sounds = {
+            'a': self.generate_tone(440),   # A4
+            'b': self.generate_tone(494),   # B4
+            'c': self.generate_tone(523),   # C5
+            'd': self.generate_tone(587),   # D5
+            'e': self.generate_tone(659),   # E5
+            'f': self.generate_tone(698),   # F5
+            'g': self.generate_tone(784)    # G5
+        }
+
         # Create ground platform
         self.platforms.add(Platform(0, SCREEN_HEIGHT-40, SCREEN_WIDTH, 40))
         self.player = Player()
@@ -72,6 +87,18 @@ class Game:
         
         self.input_sequence = []
         self.playing_sequence = False
+
+    def generate_tone(self, frequency, duration=0.1):
+        sample_rate = 44100
+        samples = int(sample_rate * duration)
+        # Create stereo sound buffer
+        wave_data = np.tile(
+            32767 * 0.5 * np.sin(2 * np.pi * frequency * np.arange(samples) / sample_rate),
+            (2, 1)
+        ).T.astype(np.int16)
+        wave_data = np.ascontiguousarray(wave_data)
+        # Convert directly to pygame sound
+        return pygame.sndarray.make_sound(wave_data)
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -94,6 +121,7 @@ class Game:
         if self.input_sequence:
             current_note = self.input_sequence.pop(0)
             self.player.current_action = current_note
+            self.note_sounds[current_note].play()  # Play corresponding sound
             
             # Handle actions
             if current_note == 'c':
@@ -116,9 +144,8 @@ class Game:
             self.screen.fill((0, 0, 0))
             self.all_sprites.draw(self.screen)
             
-            # Draw input sequence
-            font = pygame.font.Font(None, 36)
-            text = font.render("Sequence: " + " ".join(self.input_sequence), True, (255, 255, 255))
+            # Draw input sequence using music symbols
+            text = self.font.render("Sequence: " + " ".join(self.input_sequence), True, (255, 255, 255))
             self.screen.blit(text, (10, 10))
             
             pygame.display.flip()
