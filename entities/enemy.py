@@ -1,5 +1,12 @@
 import pygame
 from constants import *
+from enum import Enum
+
+
+class EnemyState(Enum):
+    IDLE = "idle"
+    STABBING = "stabbing"
+    SHIELDING = "shielding"
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -13,49 +20,30 @@ class Enemy(pygame.sprite.Sprite):
         self.x_speed = 0
         self.y_speed = 0
         self.facing = "left"
-        self.health = 100
+        self.health = True  # Simplified to boolean
+        self.state = EnemyState.IDLE
+        self.acted_this_note = False
 
-    def update(self, player):
-        # Basic AI: Move towards the player
-        if player:
-            if player.rect.x < self.rect.x:
-                self.x_speed = -ENEMY_SPEED
-                self.facing = "left"
-            elif player.rect.x > self.rect.x:
-                self.x_speed = ENEMY_SPEED
-                self.facing = "right"
-            else:
-                self.x_speed = 0
+    def update(self, player, is_note_playing):
+        if is_note_playing and not self.acted_this_note:
+            # Placeholder for AI decision-making
+            self.state = EnemyState.STABBING  # Default action for now
+            self.acted_this_note = True
+        elif not is_note_playing:
+            self.acted_this_note = False
+            self.state = EnemyState.IDLE
 
-            # Simple collision handling (stop at platforms)
-            self.rect.x += self.x_speed
-
-            # Keep within screen bounds
-            if self.rect.left < 0:
-                self.rect.left = 0
-            if self.rect.right > SCREEN_WIDTH:
-                self.rect.right = SCREEN_WIDTH
-
+        # Placeholder for movement based on state
+        if self.state == EnemyState.STABBING:
+            self.stab()
+        elif self.state == EnemyState.SHIELDING:
+            self.shield()
+    def is_stabbing(self) -> bool:
+        return self.state == EnemyState.STABBING
     def stab(self):
         print("Enemy stabs!")
-        stab_damage = 10
-        stab_range = 50
-
-        # Create a rect for the stab attack
-        if self.facing == "right":
-            stab_rect = pygame.Rect(
-                self.rect.right, self.rect.centery - 10, stab_range, 20
-            )
-        else:
-            stab_rect = pygame.Rect(
-                self.rect.left - stab_range, self.rect.centery - 10, stab_range, 20
-            )
-
-        # Check for collision with the player
-        if player and stab_rect.colliderect(player.rect):
-            player.health -= stab_damage
-            print(f"Player hit! Health: {player.health}")
+        self.state = EnemyState.STABBING
 
     def shield(self):
         print("Enemy shields!")
-        # Implement shield logic (e.g., reduce damage taken)
+        self.state = EnemyState.SHIELDING

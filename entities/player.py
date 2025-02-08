@@ -8,6 +8,8 @@ class PlayerState(Enum):
     LEFT = "left"
     RIGHT = "right"
     STILL = "still"
+    STABBING = "stabbing"
+    SHIELDING = "shielding"
 
 
 class Player(pygame.sprite.Sprite):
@@ -20,9 +22,10 @@ class Player(pygame.sprite.Sprite):
         self.velocity: float = 0
         self.velocityx: float = 0
         self.on_ground: bool = False
-        self.current_state: PlayerState = (
-            PlayerState.STILL
-        )  # Initialize action attribute
+        self.current_state: PlayerState = PlayerState.STILL
+        self.is_stabbing = False
+        self.is_shielding = False
+        self.health = True
 
     def handle_note(self, note: Note) -> None:
         if note == Note.C:
@@ -31,12 +34,29 @@ class Player(pygame.sprite.Sprite):
             self.jump(BIG_JUMP_POWER)
         elif note == Note.A:
             self.velocityx += MOVE_SPEED
-            # self.current_state = PlayerState.LEFT
+            self.current_state = PlayerState.LEFT
         elif note == Note.B:
             self.velocityx -= MOVE_SPEED
-            # self.current_state = PlayerState.RIGHT
+            self.current_state = PlayerState.RIGHT
+        elif note == Note.E:
+            self.stab()
+        elif note == Note.F:
+            self.shield()
 
+    def stab(self):
+        print("Stab!")
+        self.current_state = PlayerState.STABBING
+        self.is_stabbing = True
+
+    def shield(self):
+        print("Shield!")
+        self.current_state = PlayerState.SHIELDING
+        self.is_shielding = True
+        
     def update(self, platforms):
+        # Reset stab and shield state
+        self.is_stabbing = False
+        self.is_shielding = False
         # Horizontal movement
         self.rect.x += self.velocityx
         # Vertical movement

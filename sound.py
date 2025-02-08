@@ -50,7 +50,7 @@ def toNote(note: str) -> Note:
 class SoundManager:
     def __init__(self):
         pygame.mixer.init(frequency=SAMPLE_RATE, size=-16, channels=2, buffer=512)
-        self.note_sounds: Dict[Note] = {
+        self.note_sounds: Dict[Note, pygame.mixer.Sound] = {
             Note.A: self.generate_tone(440),  # A4
             Note.B: self.generate_tone(494),  # B4
             Note.C: self.generate_tone(523),  # C5
@@ -60,7 +60,7 @@ class SoundManager:
             Note.G: self.generate_tone(784),  # G5
         }
 
-    def generate_tone(self, frequency, duration=0.1):
+    def generate_tone(self, frequency, duration=1):
         samples = int(SAMPLE_RATE * duration)
         # Create stereo sound buffer
         wave_data = np.tile(
@@ -76,3 +76,5 @@ class SoundManager:
     def play_note(self, note: Note):
         if note in self.note_sounds:
             self.note_sounds[note].play()
+            # octave = self.note_sounds[note] * 2
+            # octave.play()   
