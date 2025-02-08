@@ -33,8 +33,12 @@ class Game:
         self.sound_manager = SoundManager()
 
         # Create ground platform
-        self.platforms.add(Platform(0, SCREEN_HEIGHT - 40, SCREEN_WIDTH, 40))
+        ground_platform = Platform(0, SCREEN_HEIGHT - 40, SCREEN_WIDTH, 40)
+        self.platforms.add(ground_platform)
+        # Calculate player's starting y-position to be on top of the platform
+        player_start_y = ground_platform.rect.top - 300  # 50 is the player's height
         self.player = Player()
+        # self.player.rect.center = (100, player_start_y)
         # Create enemies
         self.enemies.add(Enemy(300, SCREEN_HEIGHT - 100, 30, 50, BLUE))
         self.enemies.add(Enemy(500, SCREEN_HEIGHT - 100, 30, 50, BLUE))

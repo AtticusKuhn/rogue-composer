@@ -60,7 +60,7 @@ class SoundManager:
             Note.G: self.generate_tone(784),  # G5
         }
 
-    def generate_tone(self, frequency, duration=1):
+    def generate_tone(self, frequency, duration=0.3):
         samples = int(SAMPLE_RATE * duration)
         # Create stereo sound buffer
         wave_data = np.tile(

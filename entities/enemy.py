@@ -3,7 +3,7 @@ from constants import *
 from enum import Enum
 from sound import Note
 import os
-
+import random
 class EnemyState(Enum):
     IDLE = "idle"
     STABBING = "stabbing"
@@ -14,7 +14,7 @@ class EnemyState(Enum):
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height, color=RED):
         super().__init__()
-        self.image = pygame.Surface([width, height])
+        self.image = pygame.Surface([60, 100])
         self.image.fill(color)
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -48,9 +48,9 @@ class Enemy(pygame.sprite.Sprite):
         ).convert_alpha()
         # self.animations["still"].append(still_frame)
 
-        for i in range(6):  # 4 walking frames
+        for i in range(6):  # 6 still frames
             frame = still_spritesheet.subsurface(
-                pygame.Rect(i * frame_width, 0, frame_width, frame_height)
+                pygame.Rect(i * frame_width + 40, 20, 20, 40)
             )
             self.animations["idle"].append(frame)
         # idle_frame = pygame.image.load(os.path.join(base_path, "Orc-Idle.png")).convert_alpha()
@@ -69,7 +69,7 @@ class Enemy(pygame.sprite.Sprite):
 
         for i in range(4):  # 4 walking frames
             frame = walk_spritesheet.subsurface(
-                pygame.Rect(i * frame_width, 0, frame_width, frame_height)
+                pygame.Rect(i * frame_width + 40, 20, 20, 40)
             )
             self.animations["walking"].append(frame)
 
@@ -106,8 +106,15 @@ class Enemy(pygame.sprite.Sprite):
         if self.animation_timer >= self.animation_speed:
             self.animation_timer = 0
             self.current_frame = (self.current_frame + 1) % len(self.animations[self.get_animation_key()])
-            self.image = self.animations[self.get_animation_key()][self.current_frame]
-
+            # self.image = self.animations[self.get_animation_key()][self.current_frame]
+            if random.choice([True, False]):
+                self.image = self.animations[self.get_animation_key()][self.current_frame]
+            else:
+                self.image.fill((0, 255, 0))
+            center = self.rect.center
+            self.rect = self.image.get_rect()
+            self.rect.center = center
+          
     def get_animation_key(self):
         if self.state == EnemyState.WALKING:
             return "walking"

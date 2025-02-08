@@ -3,7 +3,7 @@ from constants import *
 from enum import Enum
 from sound import Note
 import os
-
+import random
 class PlayerState(Enum):
     LEFT = "left"
     RIGHT = "right"
@@ -15,12 +15,15 @@ class Player(pygame.sprite.Sprite):
     def __init__(self) -> None:
         """Initializes the Player object."""
         super().__init__()
-        self.image: pygame.Surface = pygame.Surface((30, 50))
+        self.image: pygame.Surface = pygame.Surface((60, 100))
+        # self.image.fill((0, 255, 0))
         self.image.fill((0, 255, 0))
+        self.rect = self.image.get_rect()
+        # self.rect: pygame.Rect = self.image.get_rect(center=(100, SCREEN_HEIGHT // 2))
         # self.rect = self.image.get_rect()
         # self.rect.x = x
         # self.rect.y = y
-        self.rect: pygame.Rect = self.image.get_rect(center=(100, SCREEN_HEIGHT // 2))
+        # self.rect: pygame.Rect = self.image.get_rect(center=(100, SCREEN_HEIGHT // 2))
         self.velocity: float = 0
         self.velocityx: float = 0
         self.on_ground: bool = False
@@ -38,8 +41,8 @@ class Player(pygame.sprite.Sprite):
             "stabbing": [],
         }
         self.load_animations()
-        self.image = self.animations["still"][0]
-        # self.rect = self.image.get_rect(center=(100, 0))
+        # self.image = self.animations["still"][0]
+        # self.rect = self.image.get_rect(center=(100, 10))
 
     def load_animations(self):
         base_path = "Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Characters(100x100)/Soldier/"
@@ -53,7 +56,7 @@ class Player(pygame.sprite.Sprite):
 
         for i in range(6):  # 4 walking frames
             frame = still_spritesheet.subsurface(
-                pygame.Rect(i * frame_width, 0, frame_width, frame_height)
+                pygame.Rect(i * frame_width + 40, 0 + 20, 20, 40)
             )
             self.animations["still"].append(frame)
         
@@ -64,7 +67,7 @@ class Player(pygame.sprite.Sprite):
 
         for i in range(8):  # 4 walking frames
             frame = walk_spritesheet.subsurface(
-                pygame.Rect(i * frame_width, 0, frame_width, frame_height)
+                pygame.Rect(i * frame_width + 40, 0 + 20, 20, 40)
             )
             self.animations["walking"].append(frame)
 
@@ -75,7 +78,7 @@ class Player(pygame.sprite.Sprite):
         ).convert_alpha()
     
         for i in range(6):  # 3 stabbing frames
-            frame = stabbing_spritesheet.subsurface(pygame.Rect(i*frame_width, 0, frame_width, frame_height))
+            frame = stabbing_spritesheet.subsurface(pygame.Rect(i*frame_width + 40, 20, 20, 40))
             self.animations["stabbing"].append(frame)
 
 
@@ -132,7 +135,16 @@ class Player(pygame.sprite.Sprite):
         if self.animation_timer >= self.animation_speed:
             self.animation_timer = 0
             self.current_frame = (self.current_frame + 1) % len(self.animations.get(self.get_animation_key(), [self.image])) # Fallback to the current image
-            self.image = self.animations.get(self.get_animation_key(), [self.image])[self.current_frame] # Fallback to the current image
+            # self.image = self.animations.get(self.get_animation_key(), [self.image])[self.current_frame] # Fallback to the current image
+            if random.choice([True, False]):
+                self.image = pygame.transform.scale(self.animations[self.get_animation_key()][self.current_frame], (60,100))
+                # self.image = self.animations[self.get_animation_key()][self.current_frame]
+            else:
+                self.image.fill((0, 255, 0))
+            # Re-adjust rect size and position
+            center = self.rect.center
+            self.rect = self.image.get_rect()
+            self.rect.center = center
 
         if not (self.is_stabbing or self.is_shielding):
             if self.velocityx > 0:
