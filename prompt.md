@@ -19,3 +19,6 @@ e -> block
 f -> parry
 g -> stab
 
+
+## Technical Considerations
+This game will be made in Python, using PyGame
