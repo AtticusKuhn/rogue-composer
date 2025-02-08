@@ -47,7 +47,9 @@ class Game:
             if event.type == pygame.KEYDOWN:
                 if not self.playing_sequence:
                     if event.unicode in "abcdefg":
-                        self.input_sequence.append(toNote(event.unicode))
+                        note: Note = toNote(event.unicode)
+                        self.input_sequence.append(note)
+                        self.sound_manager.play_note(note)
                     elif event.key == pygame.K_SPACE:
                         self.playing_sequence = True
                         self.execute_sequence()

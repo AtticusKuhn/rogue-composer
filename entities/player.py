@@ -30,17 +30,19 @@ class Player(pygame.sprite.Sprite):
         elif note == Note.D:
             self.jump(BIG_JUMP_POWER)
         elif note == Note.A:
-            self.current_state = PlayerState.LEFT
+            self.velocityx += MOVE_SPEED
+            # self.current_state = PlayerState.LEFT
         elif note == Note.B:
-            self.current_state = PlayerState.RIGHT
+            self.velocityx -= MOVE_SPEED
+            # self.current_state = PlayerState.RIGHT
 
     def update(self, platforms):
         # Horizontal movement
         # if hasattr(self, 'current_action'):
-        if self.current_state == PlayerState.LEFT:
-            self.velocityx += MOVE_SPEED
-        elif self.current_state == PlayerState.RIGHT:
-            self.velocityx -= MOVE_SPEED
+        # if self.current_state == PlayerState.LEFT:
+        #     self.velocityx += MOVE_SPEED
+        # elif self.current_state == PlayerState.RIGHT:
+        #     self.velocityx -= MOVE_SPEED
         self.rect.x += self.velocityx
         # Vertical movement
         self.velocity += GRAVITY
