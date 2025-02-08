@@ -17,6 +17,9 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
         self.image: pygame.Surface = pygame.Surface((30, 50))
         self.image.fill((0, 255, 0))
+        # self.rect = self.image.get_rect()
+        # self.rect.x = x
+        # self.rect.y = y
         self.rect: pygame.Rect = self.image.get_rect(center=(100, SCREEN_HEIGHT // 2))
         self.velocity: float = 0
         self.velocityx: float = 0
@@ -36,7 +39,7 @@ class Player(pygame.sprite.Sprite):
         }
         self.load_animations()
         self.image = self.animations["still"][0]
-        self.rect = self.image.get_rect(center=(100, SCREEN_HEIGHT // 2))
+        # self.rect = self.image.get_rect(center=(100, 0))
 
     def load_animations(self):
         base_path = "Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Characters(100x100)/Soldier/"
@@ -59,7 +62,7 @@ class Player(pygame.sprite.Sprite):
             os.path.join(base_path, "Soldier/Soldier-Walk.png")
         ).convert_alpha()
 
-        for i in range(4):  # 4 walking frames
+        for i in range(8):  # 4 walking frames
             frame = walk_spritesheet.subsurface(
                 pygame.Rect(i * frame_width, 0, frame_width, frame_height)
             )
@@ -70,9 +73,8 @@ class Player(pygame.sprite.Sprite):
         stabbing_spritesheet = pygame.image.load(
             os.path.join(base_path, "Soldier/Soldier-Attack01.png")
         ).convert_alpha()
-        frame_width = 100
-        frame_height = 100
-        for i in range(3):  # 3 stabbing frames
+    
+        for i in range(6):  # 3 stabbing frames
             frame = stabbing_spritesheet.subsurface(pygame.Rect(i*frame_width, 0, frame_width, frame_height))
             self.animations["stabbing"].append(frame)
 
