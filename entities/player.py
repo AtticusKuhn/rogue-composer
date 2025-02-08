@@ -38,11 +38,6 @@ class Player(pygame.sprite.Sprite):
 
     def update(self, platforms):
         # Horizontal movement
-        # if hasattr(self, 'current_action'):
-        # if self.current_state == PlayerState.LEFT:
-        #     self.velocityx += MOVE_SPEED
-        # elif self.current_state == PlayerState.RIGHT:
-        #     self.velocityx -= MOVE_SPEED
         self.rect.x += self.velocityx
         # Vertical movement
         self.velocity += GRAVITY

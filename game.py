@@ -15,7 +15,7 @@ class Game:
         self.all_sprites: pygame.sprite.Group = pygame.sprite.Group()
         self.platforms: pygame.sprite.Group = pygame.sprite.Group()
         self.font = pygame.font.Font(None, 36)
-
+        self.cursor: int = -1
         # Note positions (mapping notes to vertical positions)
         self.note_positions: dict[Note, int] = {
             Note.A: SCREEN_HEIGHT - 100,
@@ -59,17 +59,12 @@ class Game:
 
     def execute_sequence(self) -> None:
         """Executes the current note sequence."""
-        if self.input_sequence:
-            current_note: Note = self.input_sequence.pop(0)
-            # self.player.current_action = current_note
+        # if self.input_sequence:
+        if self.cursor < len(self.input_sequence) - 1:
+            self.cursor += 1
+            current_note: Note = self.input_sequence[self.cursor]
             self.player.handle_note(current_note)
             self.sound_manager.play_note(current_note)
-
-            # Handle actions
-            # if current_note == 'c':
-            #     self.player.jump(JUMP_POWER)
-            # elif current_note == 'd':
-            #     self.player.jump(BIG_JUMP_POWER)
 
             # Queue next action
             if self.input_sequence:
@@ -78,13 +73,18 @@ class Game:
                 pygame.time.set_timer(pygame.USEREVENT, 0)
                 self.playing_sequence = False
 
-    def draw_note(self, note: Note, position: int) -> None:
+    def draw_note(self, note: Note, position: int, cursor: int) -> None:
         """Draws a note on the screen."""
         x: int = 10 + position * 60  # Horizontal spacing
         y: int = (
             self.note_positions.get(note, SCREEN_HEIGHT - 100) - 50
         )  # Default to 'a' position
-        pygame.draw.rect(self.screen, (255, 255, 255), (x, y, 40, 20))
+        color: tuple[int, int, int] = (
+            (0, 255, 0)
+            if cursor == position
+            else (255, 255, 255) if cursor < position else (128, 128, 128)
+        )
+        pygame.draw.rect(self.screen, color, (x, y, 40, 20))
 
     def run(self) -> None:
         """Main game loop."""
@@ -97,7 +97,7 @@ class Game:
 
             # Draw input sequence
             for i, note in enumerate(self.input_sequence):
-                self.draw_note(note, i)
+                self.draw_note(note, i, self.cursor)
 
             pygame.display.flip()
             self.clock.tick(30)

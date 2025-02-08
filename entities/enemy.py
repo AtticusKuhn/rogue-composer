@@ -1,6 +1,7 @@
 import pygame
 from constants import *
 
+
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height, color=RED):
         super().__init__()
@@ -39,12 +40,16 @@ class Enemy(pygame.sprite.Sprite):
         print("Enemy stabs!")
         stab_damage = 10
         stab_range = 50
-        
+
         # Create a rect for the stab attack
         if self.facing == "right":
-            stab_rect = pygame.Rect(self.rect.right, self.rect.centery - 10, stab_range, 20)
+            stab_rect = pygame.Rect(
+                self.rect.right, self.rect.centery - 10, stab_range, 20
+            )
         else:
-            stab_rect = pygame.Rect(self.rect.left - stab_range, self.rect.centery - 10, stab_range, 20)
+            stab_rect = pygame.Rect(
+                self.rect.left - stab_range, self.rect.centery - 10, stab_range, 20
+            )
 
         # Check for collision with the player
         if player and stab_rect.colliderect(player.rect):
