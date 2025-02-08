@@ -28,6 +28,9 @@ class Player(pygame.sprite.Sprite):
         self.health = True
 
     def handle_note(self, note: Note) -> None:
+        self.is_stabbing = False
+        self.is_shielding = False
+        self.image.fill((0, 255, 0))
         if note == Note.C:
             self.jump(JUMP_POWER)
         elif note == Note.D:
@@ -47,6 +50,7 @@ class Player(pygame.sprite.Sprite):
         print("Stab!")
         self.current_state = PlayerState.STABBING
         self.is_stabbing = True
+        self.image.fill((255, 0, 0))
 
     def shield(self):
         print("Shield!")
@@ -55,8 +59,8 @@ class Player(pygame.sprite.Sprite):
         
     def update(self, platforms):
         # Reset stab and shield state
-        self.is_stabbing = False
-        self.is_shielding = False
+
+
         # Horizontal movement
         self.rect.x += self.velocityx
         # Vertical movement

@@ -69,6 +69,8 @@ class Game:
             self.cursor += 1
             current_note = self.input_sequence[self.cursor]
             self.player.handle_note(current_note)
+            for enemy in self.enemies:
+                enemy.handle_note(current_note)
             self.sound_manager.play_note(current_note)
             self.is_note_playing = True  # Set flag
             # Queue next action

@@ -1,7 +1,7 @@
 import pygame
 from constants import *
 from enum import Enum
-
+from sound import Note
 
 class EnemyState(Enum):
     IDLE = "idle"
@@ -23,7 +23,13 @@ class Enemy(pygame.sprite.Sprite):
         self.health = True  # Simplified to boolean
         self.state = EnemyState.IDLE
         self.acted_this_note = False
-
+    def handle_note(self, note: Note):
+        if self.state == EnemyState.STABBING:
+            self.state = EnemyState.IDLE
+        if self.state == EnemyState.IDLE:
+            self.state = EnemyState.SHIELDING
+        if self.state == EnemyState.SHIELDING:
+            self.state = EnemyState.STABBING
     def update(self, player, is_note_playing):
         if is_note_playing and not self.acted_this_note:
             # Placeholder for AI decision-making
@@ -40,6 +46,8 @@ class Enemy(pygame.sprite.Sprite):
             self.shield()
     def is_stabbing(self) -> bool:
         return self.state == EnemyState.STABBING
+    def is_shielding(self) -> bool:
+        return self.state == EnemyState.SHIELDING
     def stab(self):
         print("Enemy stabs!")
         self.state = EnemyState.STABBING
