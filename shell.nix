@@ -17,5 +17,6 @@ mkShell {
     pkgs.black
     pkgs.ruff
     pkgs.aider-chat
+    pkgs.musescore
     ];
 }
