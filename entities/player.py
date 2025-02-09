@@ -29,7 +29,7 @@ class Player(pygame.sprite.Sprite):
         self.velocityx: float = 0
         self.on_ground: bool = False
         self.current_state: PlayerState = PlayerState.STILL
-        self.is_stabbing = False
+        # self.is_stabbing = False
         # self.is_shielding = False
         self.health = True
 
@@ -45,7 +45,9 @@ class Player(pygame.sprite.Sprite):
         self.load_animations()
         # self.image = self.animations["still"][0]
         # self.rect = self.image.get_rect(center=(100, 10))
-
+    @property
+    def is_stabbing(self):
+        return self
     def load_animations(self):
         base_path = "Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Characters(100x100)/Soldier/"
         frame_width = 100
@@ -88,7 +90,7 @@ class Player(pygame.sprite.Sprite):
             os.path.join(base_path, "Soldier/Soldier-Death.png")
         ).convert_alpha()
     
-        for i in range(4):  # 3 stabbing frames
+        for i in range(4):  # 4 dead frames
             frame = dead_spritesheet.subsurface(pygame.Rect(i*frame_width + 40, 20, 20, 40))
             self.animations["dead"].append(frame)
 
@@ -116,7 +118,7 @@ class Player(pygame.sprite.Sprite):
             return
         print("Stab!")
         self.current_state = PlayerState.STABBING
-        self.is_stabbing = True
+        # self.is_stabbing = True
         self.current_frame = 0
 
     # def shield(self):
@@ -170,7 +172,7 @@ class Player(pygame.sprite.Sprite):
             self.rect = self.image.get_rect()
             self.rect.center = center
 
-        if not (self.is_stabbing):
+        if not (self.is_stabbing) and not (self.current_state == PlayerState.DEAD):
             if self.velocityx > 0:
                 self.current_state = PlayerState.RIGHT
             elif self.velocityx < 0:
