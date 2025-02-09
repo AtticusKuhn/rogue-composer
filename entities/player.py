@@ -101,6 +101,8 @@ class Player(pygame.sprite.Sprite):
     def handle_note(self, note: Note) -> None:
         # self.is_stabbing = False
         # self.is_shielding = False
+        if not self.health:
+            return
         if note == Note.C:
             self.jump(JUMP_POWER)
         elif note == Note.D:
@@ -207,6 +209,8 @@ class Player(pygame.sprite.Sprite):
             return "still"
 
     def jump(self, power):
+        if not self.health:
+            return
         if self.on_ground:
             self.velocity = power
             self.on_ground = False
