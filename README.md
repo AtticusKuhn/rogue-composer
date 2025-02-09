@@ -1,4 +1,4 @@
-# rogue-composer
+# Rogue Composer
 This is a game for the 2025 Cambridge Game Jam.
 The theme is Synesthesia.
 
