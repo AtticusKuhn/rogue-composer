@@ -90,14 +90,17 @@ class Enemy(pygame.sprite.Sprite):
         elif self.state == EnemyState.IDLE:
             self.state = EnemyState.SHIELDING
         elif self.state == EnemyState.SHIELDING:
+            self.state = EnemyState.WALKING
+        elif self.state == EnemyState.WALKING:
             self.state = EnemyState.STABBING
-
+        else:
+            raise ValueError(f"Invalid state: {self.state}")
     def update(self, player, is_note_playing):
         if is_note_playing and not self.acted_this_note:
             # Placeholder for AI decision-making
             #self.state = EnemyState.STABBING  # Default action for now
-            self.x_speed = -1 #move towards the player
-            self.state = EnemyState.WALKING
+            # self.x_speed = -1 #move towards the player
+            # self.state = EnemyState.WALKING
             self.acted_this_note = True
         elif not is_note_playing:
             self.acted_this_note = False
@@ -109,6 +112,11 @@ class Enemy(pygame.sprite.Sprite):
             self.stab()
         elif self.state == EnemyState.SHIELDING:
             self.shield()
+        elif self.state == EnemyState.WALKING:
+            if player.rect.x > self.rect.x:
+                self.x_speed = 1
+            else:
+                self.x_speed = -1
 
         self.rect.x += self.x_speed
         self.on_ground = False
