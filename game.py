@@ -10,10 +10,14 @@ from entities.platforms import Platform
 from sound import SoundManager, Note, toNote
 from constants import *
 from enum import Enum
+
+
 class GameState(Enum):
     PLAYING = "playing"
     GAME_OVER = "game_over"
     GAME_WON = "game_won"
+
+
 class Game:
     def _load_entities(self, level_data):
         # Create platforms
@@ -123,7 +127,7 @@ class Game:
 
             if event.type == pygame.KEYDOWN:
                 if not self.playing_sequence:
-                    # print(f"event.key = {event.key}, delete = {pygame.K_DELETE}")   
+                    # print(f"event.key = {event.key}, delete = {pygame.K_DELETE}")
                     if event.unicode in "abcdefg":
                         note = toNote(event.unicode)
                         self.input_sequence.append(note)
@@ -154,7 +158,7 @@ class Game:
                             Note.G: staff_start_y + 10,
                         }
                         closest_note = None
-                        min_diff = float('inf')
+                        min_diff = float("inf")
                         for note, y in note_y_positions.items():
                             diff = abs(mouse_y - y)
                             if diff < min_diff:
@@ -181,7 +185,6 @@ class Game:
             pygame.time.set_timer(pygame.USEREVENT, 0)
             self.playing_sequence = False
             self.is_note_playing = False  # Reset flag
-
 
     def _handle_enemy_collisions(self):
         current_time = pygame.time.get_ticks()
@@ -236,6 +239,7 @@ class Game:
         #     self.platforms.add(platform)
 
         self._load_entities(level_data)
+
     def draw_staves(self):
         # Draw five horizontal lines for the staff
         staff_start_y = SCREEN_HEIGHT - 250
@@ -248,6 +252,7 @@ class Game:
                 (SCREEN_WIDTH, staff_start_y + i * staff_line_spacing),
                 2,
             )
+
     def draw_note(self, note, position, cursor):
         # # Draw five horizontal lines for the staff
         staff_start_y = SCREEN_HEIGHT - 250
@@ -291,7 +296,8 @@ class Game:
             (stem_end_x, int(stem_end_y)),
             2,
         )
-    def play_game(self):  
+
+    def play_game(self):
         self._handle_events()
         # Update player
         self.player.update(self.platforms, self.enemies)
@@ -379,7 +385,6 @@ class Game:
         for i, note in enumerate(self.input_sequence):
             self.draw_note(note, i, self.cursor)
 
-
     def _show_game_over_screen(self):
         self.screen.fill((255, 0, 0))
         string = "Game Over"
@@ -389,6 +394,7 @@ class Game:
         y = 100 - size[1] // 2
 
         self.screen.blit(text, (x, y))
+
     def _show_game_won_screen(self):
         self.screen.fill((255, 255, 0))
         string = "You Won"
@@ -398,6 +404,7 @@ class Game:
         y = 100 - size[1] // 2
 
         self.screen.blit(text, (x, y))
+
     def run(self):
         while True:
             if self.game_state == GameState.PLAYING:

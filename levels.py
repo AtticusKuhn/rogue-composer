@@ -10,9 +10,18 @@ level_1_platforms = [
 ]
 level_2_platforms = [
     {"x": 0, "y": SCREEN_HEIGHT - 40, "width": 3 * SCREEN_WIDTH / 5, "height": 40},
-    {"x": 3 * SCREEN_WIDTH / 5, "y": SCREEN_HEIGHT - 100, "width": SCREEN_WIDTH / 5, "height": 40},
-    {"x": 4 * SCREEN_WIDTH / 5, "y": SCREEN_HEIGHT - 40, "width": SCREEN_WIDTH / 5, "height": 40}
-
+    {
+        "x": 3 * SCREEN_WIDTH / 5,
+        "y": SCREEN_HEIGHT - 100,
+        "width": SCREEN_WIDTH / 5,
+        "height": 40,
+    },
+    {
+        "x": 4 * SCREEN_WIDTH / 5,
+        "y": SCREEN_HEIGHT - 40,
+        "width": SCREEN_WIDTH / 5,
+        "height": 40,
+    },
 ]
 
 levels = [
@@ -96,7 +105,7 @@ levels = [
                 "color": "BLUE",
                 "behavior": ["stab", "move_right", "move_left"],
                 "platforms": level_1_platforms,
-            }
+            },
         ],
         "apples": [{"x": 600, "y": SCREEN_HEIGHT - 80}],
     },

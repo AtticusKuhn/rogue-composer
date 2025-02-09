@@ -161,7 +161,7 @@ class Player(pygame.sprite.Sprite):
         self.velocity += GRAVITY
         self.rect.y += self.velocity
         hits_y = pygame.sprite.spritecollide(self, platforms, False)
-        
+
         for hit in hits_y:
             if self.velocity > 0:  # Falling down
                 self.rect.bottom = hit.rect.top
