@@ -138,4 +138,4 @@ class Game:
                 self.draw_note(note, i, self.cursor)
 
             pygame.display.flip()
-            self.clock.tick(30)
+            self.clock.tick(60)
