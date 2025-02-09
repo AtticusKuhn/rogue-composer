@@ -77,7 +77,9 @@ def drawMenu(screen, background, buttons):
 
     # screen.blit(background, (0, 0))
     screen.blit(
-        pygame.transform.scale(background, (constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT)),
+        pygame.transform.scale(
+            background, (constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT)
+        ),
         (0, 0),
     )
     for button in buttons:

@@ -18,7 +18,7 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height, platforms, behavior, color=RED):
 
         super().__init__()
-        self.platform_group = platforms #pygame.sprite.Group()
+        self.platform_group = platforms  # pygame.sprite.Group()
         # for platform_rect in platforms:
         #     platform_sprite = pygame.sprite.Sprite()
         #     platform_sprite.rect = platform_rect
@@ -105,15 +105,18 @@ class Enemy(pygame.sprite.Sprite):
 
         self.behavior_index = (self.behavior_index + 1) % len(self.behavior)
         self.handle_action()
+
+    @property
+    def is_dead(self):
+        return self.state == EnemyState.DEAD
+
     def handle_action(self):
         current_action = self.behavior[self.behavior_index]
-
+        if self.state == EnemyState.DEAD:
+            return
         if current_action == "stab":
             # self.state = EnemyState.STABBING
             self.stab()
-        # elif current_action == "shield":
-        #     self.state = EnemyState.SHIELDING
-        #     self.shield()
         elif current_action == "move_left":
             self.state = EnemyState.WALKING
             self.x_speed = -1
@@ -146,7 +149,6 @@ class Enemy(pygame.sprite.Sprite):
 
         # Placeholder for movement based on state
 
-
         self.y_speed += GRAVITY
 
         self.rect.x += self.x_speed
@@ -166,12 +168,12 @@ class Enemy(pygame.sprite.Sprite):
         #     self.x_speed = 0
 
         self.rect.y += self.y_speed
-        player_group = pygame.sprite.GroupSingle(sprite = player)
+        player_group = pygame.sprite.GroupSingle(sprite=player)
 
         player_hits = pygame.sprite.spritecollide(self, player_group, False)
         platform_hits = pygame.sprite.spritecollide(self, self.platform_group, False)
         for hit in player_hits:
-            print("Enemy hit player!")
+            # print("Enemy hit player!")
             self.x_speed = 0
             if self.x_speed > 0:
                 self.rect.left = hit.rect.right
@@ -205,9 +207,11 @@ class Enemy(pygame.sprite.Sprite):
             center = self.rect.center
             self.rect = self.image.get_rect()
             self.rect.center = center
+
     def die(self):
         print("enemy died")
         self.state = EnemyState.DEAD
+
     def get_animation_key(self):
         if self.state == EnemyState.DEAD:
             return "dead"

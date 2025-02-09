@@ -30,6 +30,7 @@ class Player(pygame.sprite.Sprite):
         self.current_frame = 0
         self.image = self.animations["still"][0]
         self.last_hit_time = 0
+
     def __init__(self) -> None:
         """Initializes the Player object."""
         super().__init__()
@@ -45,7 +46,7 @@ class Player(pygame.sprite.Sprite):
 
         self.animations = {"still": [], "walking": [], "stabbing": [], "dead": []}
         self.load_animations()
-        
+
         # self.rect = self.image.get_rect()
         self.reset()
         # self.rect = self.image.get_rect(center=(100, 10))
@@ -102,13 +103,16 @@ class Player(pygame.sprite.Sprite):
                 pygame.Rect(i * frame_width + 40, 20, 20, 40)
             )
             self.animations["dead"].append(frame)
+
     def die(self):
         print("The player has died")
         self.state = PlayerState.DEAD
-    
+
     def handle_note(self, note: Note) -> None:
         # self.is_stabbing = False
         # self.is_shielding = False
+        if self.is_dead:
+            return
         # if not self.health:
         #     print("Player is dead!")
         #     return
@@ -124,9 +128,11 @@ class Player(pygame.sprite.Sprite):
             self.state = PlayerState.RIGHT
         elif note == Note.E:
             self.stab()
+
     @property
     def is_dead(self):
         return self.state == PlayerState.DEAD
+
     def stab(self):
         if self.is_dead:
             return
@@ -206,16 +212,13 @@ class Player(pygame.sprite.Sprite):
             else:
                 self.state = PlayerState.STILL
 
-        if self.velocityx == 0 and self.state != PlayerState.STABBING:
-            self.state = PlayerState.STILL
+        # if self.velocityx == 0 and self.state != PlayerState.STABBING:
+        #     self.state = PlayerState.STILL
 
     def get_animation_key(self):
         if self.state == PlayerState.STABBING:
             return "stabbing"
-        elif (
-            self.state == PlayerState.LEFT
-            or self.state == PlayerState.RIGHT
-        ):
+        elif self.state == PlayerState.LEFT or self.state == PlayerState.RIGHT:
             return "walking"
         elif self.state == PlayerState.DEAD:
             return "dead"

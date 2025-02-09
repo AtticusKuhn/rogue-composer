@@ -1,6 +1,7 @@
 import pygame
 from constants import *
 
+
 class Apple(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
@@ -9,12 +10,11 @@ class Apple(pygame.sprite.Sprite):
         self.current_frame = 0
         self.animation_timer = 0
         self.frames = self.load_frames()  # Load frames
-        self.image = self.frames[self.current_frame] # Initialize image
+        self.image = self.frames[self.current_frame]  # Initialize image
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
         self.is_collected = False
-
 
     def load_frames(self):
         frames = []
@@ -24,7 +24,11 @@ class Apple(pygame.sprite.Sprite):
 
         for i in range(self.animation_frames):
             frame = pygame.Surface((frame_width, frame_height), pygame.SRCALPHA)
-            frame.blit(self.sprite_sheet, (0, 0), (i * frame_width, 0, frame_width, frame_height))
+            frame.blit(
+                self.sprite_sheet,
+                (0, 0),
+                (i * frame_width, 0, frame_width, frame_height),
+            )
             frames.append(frame)
         return frames
 
@@ -32,9 +36,9 @@ class Apple(pygame.sprite.Sprite):
         # Basic animation
         self.animation_timer += 1
         if self.animation_timer > 5:
-          self.animation_timer = 0
-          self.current_frame = (self.current_frame + 1) % self.animation_frames
-          self.image = self.frames[self.current_frame]  # Update the image
+            self.animation_timer = 0
+            self.current_frame = (self.current_frame + 1) % self.animation_frames
+            self.image = self.frames[self.current_frame]  # Update the image
 
         # Collision detection
         if self.rect.colliderect(player.rect):

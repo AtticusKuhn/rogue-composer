@@ -7,11 +7,6 @@ from enum import Enum
 import time
 
 
-
-
-
-
-
 class Note(Enum):
     A = "a"
     B = "b"
@@ -21,14 +16,17 @@ class Note(Enum):
     F = "f"
     G = "g"
 
+
 # define all the constant values -----------------------------------------------
-device = 0     # device number in win10 laptop
-instrument = 9 # http://www.ccarh.org/courses/253/handout/gminstruments/
-note_Do = 48   # http://www.electronics.dit.ie/staff/tscarff/Music_technology/midi/midi_note_numbers_for_octaves.htm
+device = 0  # device number in win10 laptop
+instrument = 9  # http://www.ccarh.org/courses/253/handout/gminstruments/
+note_Do = 48  # http://www.electronics.dit.ie/staff/tscarff/Music_technology/midi/midi_note_numbers_for_octaves.htm
 note_Re = 50
 note_Me = 52
 volume = 127
 wait_time = 0.5
+
+
 def toNote(note: str) -> Note:
     if note == "a":
         return Note.A
@@ -51,7 +49,7 @@ class SoundManager:
         pygame.midi.init()
         self.player = pygame.midi.Output(0)
 
-            # set the instrument -----------------------------------------------------------
+        # set the instrument -----------------------------------------------------------
         self.player.set_instrument(instrument)
         pygame.mixer.init(frequency=SAMPLE_RATE, size=-16, channels=2, buffer=512)
         self.note_sounds = {
@@ -70,14 +68,14 @@ class SoundManager:
             Note.E: 4,  # E3
             Note.F: 5,  # F3
             Note.G: 6,  # G3
-            
         }
-
 
     def play_note(self, note: Note):
         if note in self.midi_note_mapping:
             midi_note = self.midi_note_mapping[note]
-            filename = f"Piano{midi_note + 111}.ogg" # filenames start from 111, and C3 is 48
+            filename = (
+                f"Piano{midi_note + 111}.ogg"  # filenames start from 111, and C3 is 48
+            )
             try:
                 sound = pygame.mixer.Sound(filename)
                 sound.play()
@@ -88,6 +86,6 @@ class SoundManager:
         del self.player
         pygame.midi.quit()
 
-            # del device
-            # octave = self.note_sounds[note] * 2
-            # octave.play()
+        # del device
+        # octave = self.note_sounds[note] * 2
+        # octave.play()

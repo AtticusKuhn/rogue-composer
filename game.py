@@ -3,13 +3,17 @@ import sys
 from entities.player import Player
 from entities.apple import Apple
 from levels import levels
+
 # from entities.player import Player
 from entities.enemy import Enemy
 from entities.platforms import Platform
 from sound import SoundManager, Note, toNote
 from constants import *
-
-
+from enum import Enum
+class GameState(Enum):
+    PLAYING = "playing"
+    GAME_OVER = "game_over"
+    GAME_WON = "game_won"
 class Game:
     def _load_entities(self, level_data):
         # Create platforms
@@ -49,8 +53,10 @@ class Game:
             self.apples.add(apple)
 
         self.all_sprites.add(self.player, *self.platforms, *self.enemies, *self.apples)
+
     def __init__(self):
         pygame.init()
+        self.game_state = GameState.PLAYING
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.BACKGROUND_IMAGE = pygame.image.load("Forest.png").convert()
         pygame.display.set_caption("Synesthesia")
@@ -77,8 +83,6 @@ class Game:
 
         # Load level data
         level_data = levels[self.level_index]
-
-        
 
         # Calculate player's starting y-position to be on top of the first platform
         # player_start_y = level_data["platforms"][0]["y"] - 300
@@ -145,6 +149,37 @@ class Game:
             pygame.time.set_timer(pygame.USEREVENT, 0)
             self.playing_sequence = False
             self.is_note_playing = False  # Reset flag
+            
+
+    def _handle_enemy_collisions(self):
+        current_time = pygame.time.get_ticks()
+        for enemy in self.enemies:
+            if pygame.sprite.collide_rect(self.player, enemy):
+                if self.player.is_stabbing:
+                    enemy.health = False  # Enemy takes damage
+                    enemy.last_hit_time = current_time
+                if (
+                    enemy.is_stabbing()
+                    and (current_time - self.player.last_hit_time) > 500
+                ):
+                    # self.player.health = False  # Player takes damage
+                    self.player.die()
+                    self.player.last_hit_time = current_time
+                    # sys.exit
+                    print("the player has died")
+                    self.game_state = GameState.GAME_OVER
+
+    def _remove_dead_sprites(self):
+        dead_sprites = [
+            sprite
+            for sprite in self.all_sprites
+            if hasattr(sprite, "state") and sprite.state == "dead"
+            # if hasattr(sprite, "health") and s
+        ]
+        for sprite in dead_sprites:
+            self.all_sprites.remove(sprite)
+            if sprite in self.enemies:
+                self.enemies.remove(sprite)
 
     def load_level(self):
         # Reset game state
@@ -187,13 +222,12 @@ class Game:
         x = 10 + position * 60
         note_positions = {  # relative to staff_start_y
             Note.A: staff_start_y + staff_line_spacing * 3.5,
-            Note.B: staff_start_y + staff_line_spacing * 3, # on space below
+            Note.B: staff_start_y + staff_line_spacing * 3,  # on space below
             Note.C: staff_start_y + staff_line_spacing * 2.5,  # on space above
             Note.D: staff_start_y + staff_line_spacing * 2,
             Note.E: staff_start_y + staff_line_spacing * 1.5,
             Note.F: staff_start_y + staff_line_spacing * 1,
             Note.G: staff_start_y + staff_line_spacing * 0.5,
-            
         }
 
         y = note_positions.get(note, staff_start_y)
@@ -215,94 +249,129 @@ class Game:
             stem_end_x = x - 10
             stem_end_y = y + stem_length
 
-        pygame.draw.line(self.screen, color, (stem_start_x, int(stem_start_y)), (stem_end_x, int(stem_end_y)), 2)
+        pygame.draw.line(
+            self.screen,
+            color,
+            (stem_start_x, int(stem_start_y)),
+            (stem_end_x, int(stem_end_y)),
+            2,
+        )
+    def play_game(self):  
+        self._handle_events()
+        # Update player
+        self.player.update(self.platforms, self.enemies)
 
+        # Update enemies
+        for enemy in self.enemies:
+            enemy.update(self.player, self.is_note_playing)
+            if enemy.is_dead:
+                print("Enemy is dead!")
+                self.enemies.remove(enemy)
+        # Handle apple collection
+        for apple in self.apples:
+            if apple.update(self.player):
+                print("Level Won!")
+                self.level_index += 1
+                if self.level_index < len(levels):
+                    self.load_level()
+                else:
+                    print("Game Won!")
+                    # TODO: Implement proper game completion screen/logic
+                    # For now, just quit the game
+                    self.game_state = GameState.GAME_WON
+                    # pygame.quit()
+                    # sys.exit()
+
+        # Handle collisions
+        self._handle_enemy_collisions()
+        # current_time = pygame.time.get_ticks()
+        # for enemy in self.enemies:
+        #     if pygame.sprite.collide_rect(self.player, enemy):
+        #         if self.player.is_stabbing:
+        #             enemy.health = False  # Enemy takes damage
+        #             enemy.last_hit_time = current_time
+        #         if (
+        #             enemy.is_stabbing()
+        #             and (current_time - self.player.last_hit_time) > 500
+        #         ):
+        #             # self.player.health = False  # Player takes damage
+        #             self.player.die()
+        #             self.player.last_hit_time = current_time
+        #             # sys.exit
+        #             print("the player has died")
+
+        self._handle_enemy_collisions()
+        self._remove_dead_sprites()
+
+        # Drawing
+        self.screen.fill((0, 0, 0))  # Clear screen
+        background_image = pygame.image.load("background_image.png")
+        self.screen.blit(
+            pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT)),
+            (0, 0),
+        )
+        # Draw player
+        if self.player.velocityx >= 0:
+            self.screen.blit(self.player.image, self.player.rect)
+        else:
+            self.screen.blit(
+                pygame.transform.flip(self.player.image, True, False),
+                self.player.rect,
+            )
+
+        # Draw enemies
+        for enemy in self.enemies:
+            if enemy.facing == "right":
+                self.screen.blit(enemy.image, enemy.rect)
+
+            else:
+                self.screen.blit(
+                    pygame.transform.flip(enemy.image, True, False), enemy.rect
+                )
+
+        # Draw platforms
+        for platform in self.platforms:
+            self.screen.blit(platform.image, platform.rect)
+
+        # Draw apples
+        for apple in self.apples:
+            if not apple.is_collected:
+                self.screen.blit(apple.image, apple.rect)
+
+        # self.all_sprites.draw(self.screen) # No longer needed
+
+        # Draw input sequence
+        for i, note in enumerate(self.input_sequence):
+            self.draw_note(note, i, self.cursor)
+
+
+    def _show_game_over_screen(self):
+        self.screen.fill((255, 0, 0))
+        string = "Game Over"
+        text = BIG_TEXT_FONT.render(string, 1, BLACK)
+        size = BIG_TEXT_FONT.size(string)
+        x = 100 - size[0] // 2
+        y = 100 - size[1] // 2
+
+        self.screen.blit(text, (x, y))
+    def _show_game_won_screen(self):
+        self.screen.fill((255, 255, 0))
+        string = "You Won"
+        text = BIG_TEXT_FONT.render(string, 1, BLACK)
+        size = BIG_TEXT_FONT.size(string)
+        x = 100 - size[0] // 2
+        y = 100 - size[1] // 2
+
+        self.screen.blit(text, (x, y))
     def run(self):
         while True:
-            self._handle_events()
-            # Update player
-            self.player.update(self.platforms, self.enemies)
-
-            # Update enemies
-            for enemy in self.enemies:
-                enemy.update(self.player, self.is_note_playing)
-
-            # Handle apple collection
-            for apple in self.apples:
-                if apple.update(self.player):
-                    print("Level Won!")
-                    self.level_index += 1
-                    if self.level_index < len(levels):
-                        self.load_level()
-                    else:
-                        print("Game Won!")
-                        # TODO: Implement proper game completion screen/logic
-                        # For now, just quit the game
-                        pygame.quit()
-                        sys.exit()
-
-            # Handle collisions
-            current_time = pygame.time.get_ticks()
-            for enemy in self.enemies:
-                if pygame.sprite.collide_rect(self.player, enemy):
-                    if self.player.is_stabbing:
-                        enemy.health = False  # Enemy takes damage
-                        enemy.last_hit_time = current_time
-                    if enemy.is_stabbing() and (current_time - self.player.last_hit_time) > 500:
-                        # self.player.health = False  # Player takes damage
-                        self.player.die()
-                        self.player.last_hit_time = current_time
-                        # sys.exit
-                        print("the player has died")
-
-            # Remove dead sprites
-            dead_sprites = [
-                sprite
-                for sprite in self.all_sprites
-                if hasattr(sprite, "state") and sprite.state == "dead"
-                # if hasattr(sprite, "health") and s
-            ]
-            for sprite in dead_sprites:
-                self.all_sprites.remove(sprite)
-                if sprite in self.enemies:
-                    self.enemies.remove(sprite)
-
-            # Drawing
-            self.screen.fill((0, 0, 0))  # Clear screen
-            background_image = pygame.image.load("background_image.png")
-            self.screen.blit(
-                pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT)),
-                (0, 0),
-            )
-            # Draw player
-            if self.player.velocityx >= 0:
-                self.screen.blit(self.player.image, self.player.rect)
-            else:
-                self.screen.blit(pygame.transform.flip(self.player.image,
-                                                       True, False), self.player.rect)
-
-            # Draw enemies
-            for enemy in self.enemies:
-                if enemy.facing == "right":
-                    self.screen.blit(enemy.image, enemy.rect)
-                
-                else:
-                    self.screen.blit(pygame.transform.flip(enemy.image, True, False), enemy.rect)
-
-            # Draw platforms
-            for platform in self.platforms:
-                self.screen.blit(platform.image, platform.rect)
-
-            # Draw apples
-            for apple in self.apples:
-                if not apple.is_collected:
-                    self.screen.blit(apple.image, apple.rect)
-
-            # self.all_sprites.draw(self.screen) # No longer needed
-
-            # Draw input sequence
-            for i, note in enumerate(self.input_sequence):
-                self.draw_note(note, i, self.cursor)
-
+            print(f"game state = {self.game_state}")
+            if self.game_state == GameState.PLAYING:
+                self.play_game()
+            elif self.game_state == GameState.GAME_OVER:
+                self._show_game_over_screen()
+            elif self.game_state == GameState.GAME_WON:
+                self._show_game_won_screen()
             pygame.display.flip()
             self.clock.tick(60)
+      

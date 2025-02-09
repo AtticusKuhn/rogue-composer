@@ -10,22 +10,49 @@ level_1_platforms = [
 ]
 
 levels = [
-    {
-        "platforms": level_0_platforms,
-        "enemies": [
-            {"x": 350, "y": SCREEN_HEIGHT - 200, "width": 30, "height": 50, "color": "BLUE", "behavior": ["stab"], "platforms": level_0_platforms}
-        ],
-        "apples": [
-            {"x": 600, "y": SCREEN_HEIGHT - 80}
-        ]
-    },
+    # {
+    #     "platforms": level_0_platforms,
+    #     "enemies": [
+    #         {
+    #             "x": 350,
+    #             "y": SCREEN_HEIGHT - 200,
+    #             "width": 30,
+    #             "height": 50,
+    #             "color": "BLUE",
+    #             "behavior": ["stab"],
+    #             "platforms": level_0_platforms,
+    #         }
+    #     ],
+    #     "apples": [{"x": 600, "y": SCREEN_HEIGHT - 80}],
+    # },
+    # {
+    #     "platforms": level_1_platforms,
+    #     "enemies": [
+    #         {
+    #             "x": 450,
+    #             "y": SCREEN_HEIGHT - 200,
+    #             "width": 30,
+    #             "height": 50,
+    #             "color": "BLUE",
+    #             "behavior": ["move_left"],
+    #             "platforms": level_1_platforms,
+    #         }
+    #     ],
+    #     "apples": [{"x": 600, "y": SCREEN_HEIGHT - 80}],
+    # },
     {
         "platforms": level_1_platforms,
         "enemies": [
-            {"x": 450, "y": SCREEN_HEIGHT - 200, "width": 30, "height": 50, "color": "BLUE", "behavior": ["move_left"], "platforms": level_1_platforms}
+            {
+                "x": 450,
+                "y": SCREEN_HEIGHT - 200,
+                "width": 30,
+                "height": 50,
+                "color": "BLUE",
+                "behavior": ["move_left", "move_right", "stab"],
+                "platforms": level_1_platforms,
+            }
         ],
-        "apples": [
-            {"x": 600, "y": SCREEN_HEIGHT - 80}
-        ]
-    }
+        "apples": [{"x": 600, "y": SCREEN_HEIGHT - 80}],
+    },
 ]
