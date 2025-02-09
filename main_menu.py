@@ -3,6 +3,7 @@ import pygame
 from game import Game
 import constants
 
+
 class Button:
     def __init__(self, text, x, y, width, height, centre, box, func):
         self.text = text
@@ -38,13 +39,33 @@ class Button:
 def makeMenu(game_instance):
     buttons = []
     txts = ["PLAY", "QUIT"]
-    funcs = [lambda : 1, game_instance.run, lambda : 0]
-    buttons.append(Button("Rogue Composer", constants.SCREEN_WIDTH // 2, 100,
-                       300, 150, True, False, func))
+    funcs = [lambda: 1, game_instance.run, lambda: 0]
+    buttons.append(
+        Button(
+            "Rogue Composer",
+            constants.SCREEN_WIDTH // 2,
+            100,
+            300,
+            150,
+            True,
+            False,
+            func,
+        )
+    )
     gap = constants.SCREEN_HEIGHT // (len(txts) + 2)
     for indx, (txt, func) in enumerate(zip(txts, funcs)):
-        buttons.append(Button(txt, constants.SCREEN_WIDTH // 2, gap * (indx + 2),
-                       300, gap - 20, True, True, func))
+        buttons.append(
+            Button(
+                txt,
+                constants.SCREEN_WIDTH // 2,
+                gap * (indx + 2),
+                300,
+                gap - 20,
+                True,
+                True,
+                func,
+            )
+        )
 
     return buttons
 
@@ -61,7 +82,7 @@ def drawMenu(screen, background, buttons):
 
 def menu(game_instance):
     buttons = makeMenu(game_instance)
-    
+
     background = game_instance.BACKGROUND_IMAGE
     choice = -1
     while choice != 0:

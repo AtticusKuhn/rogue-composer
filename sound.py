@@ -77,4 +77,4 @@ class SoundManager:
         if note in self.note_sounds:
             self.note_sounds[note].play()
             # octave = self.note_sounds[note] * 2
-            # octave.play()   
+            # octave.play()
