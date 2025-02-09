@@ -14,7 +14,7 @@ while killing or avoiding any enemies along the way.
 
 
 # Controls
-SPACE -> play/pause composition
+SPACE -> play/pause composition,
 R -> reset level (if you fail the level, you can reset).
 # Letter Notes
 Each note of the C-major scale corresponds to one
