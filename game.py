@@ -393,7 +393,7 @@ class Game:
             ),
             (0, 0),
         )
-        string = "Game Over\n Press R to restart"
+        string = "Game Over: Press R to restart"
         text = BIG_TEXT_FONT.render(string, 1, BLACK)
         size = BIG_TEXT_FONT.size(string)
         x = SCREEN_WIDTH // 2 - size[0] // 2
@@ -423,7 +423,7 @@ class Game:
             ),
             (0, 0),
         )
-        string = "Congratulations!\nYou Won!\nThanks for Playing!"
+        string = "Congratulations, you won! Thanks for Playing!"
         text = BIG_TEXT_FONT.render(string, 1, BLACK)
         size = BIG_TEXT_FONT.size(string)
         x = SCREEN_WIDTH // 2 - size[0] // 2
