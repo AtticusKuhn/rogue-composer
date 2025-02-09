@@ -136,11 +136,11 @@ class Player(pygame.sprite.Sprite):
             self.animation_timer = 0
             self.current_frame = (self.current_frame + 1) % len(self.animations.get(self.get_animation_key(), [self.image])) # Fallback to the current image
             # self.image = self.animations.get(self.get_animation_key(), [self.image])[self.current_frame] # Fallback to the current image
-            if random.choice([True, False]):
-                self.image = pygame.transform.scale(self.animations[self.get_animation_key()][self.current_frame], (60,100))
+            # if random.choice([True, False]):
+            self.image = pygame.transform.scale(self.animations[self.get_animation_key()][self.current_frame], (60,100))
                 # self.image = self.animations[self.get_animation_key()][self.current_frame]
-            else:
-                self.image.fill((0, 255, 0))
+            # else:
+                # self.image.fill((0, 255, 0))
             # Re-adjust rect size and position
             center = self.rect.center
             self.rect = self.image.get_rect()

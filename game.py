@@ -40,8 +40,8 @@ class Game:
         self.player = Player()
         # self.player.rect.center = (100, player_start_y)
         # Create enemies
-        self.enemies.add(Enemy(300, SCREEN_HEIGHT - 100, 30, 50, BLUE))
-        self.enemies.add(Enemy(500, SCREEN_HEIGHT - 100, 30, 50, BLUE))
+        self.enemies.add(Enemy(300, SCREEN_HEIGHT - 100, 30, 50,platforms = self.platforms, color = BLUE))
+        self.enemies.add(Enemy(500, SCREEN_HEIGHT - 100, 30, 50,platforms = self.platforms, color = BLUE))
 
         self.all_sprites.add(self.player, *self.platforms, *self.enemies)
 
