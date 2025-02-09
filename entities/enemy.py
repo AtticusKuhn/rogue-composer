@@ -140,6 +140,8 @@ class Enemy(pygame.sprite.Sprite):
     def get_animation_key(self):
         if self.state == EnemyState.WALKING:
             return "walking"
+        elif self.state == EnemyState.STABBING:
+            return "stabbing"
         else:
             return "idle"
 

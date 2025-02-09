@@ -117,7 +117,8 @@ class Game:
 
             # Drawing
             self.screen.fill((0, 0, 0))  # Clear screen
-
+            background_image = pygame.image.load("background_image.png")
+            self.screen.blit(pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT)), (0, 0))
             # Draw player
             self.screen.blit(self.player.image, self.player.rect)
 
