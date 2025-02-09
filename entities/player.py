@@ -96,10 +96,10 @@ class Player(pygame.sprite.Sprite):
             self.jump(JUMP_POWER)
         elif note == Note.D:
             self.jump(BIG_JUMP_POWER)
-        elif note == Note.A:
+        elif note == Note.B:
             self.velocityx = -MOVE_SPEED  # Move left
             self.state = PlayerState.LEFT
-        elif note == Note.B:
+        elif note == Note.A:
             self.velocityx = MOVE_SPEED  # Move right
             self.state = PlayerState.RIGHT
         elif note == Note.E:
