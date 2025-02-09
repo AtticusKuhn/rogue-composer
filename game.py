@@ -132,8 +132,11 @@ class Game:
                         self.playing_sequence = True
                         self.execute_sequence()
                     elif event.key == pygame.K_BACKSPACE:
-                        print("delete")
-                        self.input_sequence.pop()
+
+                        # print("delete")
+                        if self.input_sequence:
+                            self.input_sequence.pop()
+                        # self.input_sequence.pop()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if not self.playing_sequence:
                     mouse_x, mouse_y = event.pos

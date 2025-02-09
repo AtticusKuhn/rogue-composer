@@ -78,7 +78,7 @@ class SoundManager:
             )
             try:
                 sound = pygame.mixer.Sound(filename)
-                sound.play()
+                sound.play(maxtime=300, fade_ms=10)
             except pygame.error as e:
                 print(f"Error playing {filename}: {e}")
 
