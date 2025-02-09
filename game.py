@@ -140,7 +140,7 @@ class Game:
                         if self.input_sequence:
                             self.input_sequence.pop()
                         # self.input_sequence.pop()
-                    elif event.key == pygame.K_r: 
+                    elif event.key == pygame.K_r:
                         self.load_level()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if not self.playing_sequence:
@@ -387,14 +387,27 @@ class Game:
             self.draw_note(note, i, self.cursor)
 
     def _show_game_over_screen(self):
-        self.screen.fill((255, 0, 0))
-        string = "Game Over"
+        self.screen.blit(
+            pygame.transform.scale(
+                self.BACKGROUND_IMAGE, (SCREEN_WIDTH, SCREEN_HEIGHT)
+            ),
+            (0, 0),
+        )
+        string = "Game Over\n Press R to restart"
         text = BIG_TEXT_FONT.render(string, 1, BLACK)
         size = BIG_TEXT_FONT.size(string)
-        x = 100 - size[0] // 2
-        y = 100 - size[1] // 2
+        x = SCREEN_WIDTH // 2 - size[0] // 2
+        y = SCREEN_HEIGHT // 2 - size[1] // 2
 
         self.screen.blit(text, (x, y))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    self.load_level()
+                    self.game_state = GameState.PLAYING
 
     def _show_game_won_screen(self):
         self.screen.fill((255, 255, 0))
@@ -414,10 +427,7 @@ class Game:
                 self._show_game_over_screen()
             elif self.game_state == GameState.GAME_WON:
                 self._show_game_won_screen()
-                    # for event in pygame.event.get()
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
+                # for event in pygame.event.get()
+
             pygame.display.flip()
             self.clock.tick(60)

@@ -37,12 +37,12 @@ class Player(pygame.sprite.Sprite):
         self.image: pygame.Surface = pygame.Surface((60, 100))
         self.rect = self.image.get_rect()
         self.animations: Dict[str, List[pygame.Surface]] = {
-            "still": [], 
-            "walking": [], 
-            "stabbing": [], 
-            "dead": []
+            "still": [],
+            "walking": [],
+            "stabbing": [],
+            "dead": [],
         }
-        
+
         self.load_animations()
         self.reset()
 
@@ -50,7 +50,9 @@ class Player(pygame.sprite.Sprite):
     def is_stabbing(self):
         return self.state == PlayerState.STABBING
 
-    def _load_animation_frames(self, path: str, frame_count: int, y_offset: int = 0) -> List[pygame.Surface]:
+    def _load_animation_frames(
+        self, path: str, frame_count: int, y_offset: int = 0
+    ) -> List[pygame.Surface]:
         """Load animation frames from a spritesheet image."""
         spritesheet = pygame.image.load(path).convert_alpha()
         return [
@@ -61,18 +63,22 @@ class Player(pygame.sprite.Sprite):
     def load_animations(self) -> None:
         """Load all animation frames from asset files."""
         base_path = "Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Characters(100x100)/Soldier/"
-        
+
         self.animations["still"] = self._load_animation_frames(
-            os.path.join(base_path, "Soldier/Soldier-Idle.png"), 6)
-        
+            os.path.join(base_path, "Soldier/Soldier-Idle.png"), 6
+        )
+
         self.animations["walking"] = self._load_animation_frames(
-            os.path.join(base_path, "Soldier/Soldier-Walk.png"), 8)
-        
+            os.path.join(base_path, "Soldier/Soldier-Walk.png"), 8
+        )
+
         self.animations["stabbing"] = self._load_animation_frames(
-            os.path.join(base_path, "Soldier/Soldier-Attack01.png"), 6, y_offset=20)
-        
+            os.path.join(base_path, "Soldier/Soldier-Attack01.png"), 6,
+        )
+
         self.animations["dead"] = self._load_animation_frames(
-            os.path.join(base_path, "Soldier/Soldier-Death.png"), 4, y_offset=20)
+            os.path.join(base_path, "Soldier/Soldier-Death.png"), 4, y_offset=20
+        )
 
     def die(self):
         print("The player has died")
@@ -116,7 +122,9 @@ class Player(pygame.sprite.Sprite):
     #     self.state = PlayerState.SHIELDING
     #     self.is_shielding = True
 
-    def update(self, platforms: pygame.sprite.Group, enemies: pygame.sprite.Group) -> None:
+    def update(
+        self, platforms: pygame.sprite.Group, enemies: pygame.sprite.Group
+    ) -> None:
         # Horizontal movement and collision
         self.rect.x += self.velocityx
         hits_x = pygame.sprite.spritecollide(self, platforms, False)
