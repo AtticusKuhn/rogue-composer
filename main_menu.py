@@ -4,7 +4,7 @@ from game import Game
 import constants
 
 class Button:
-    def __init__(self, text, x, y, width, height, centre, func):
+    def __init__(self, text, x, y, width, height, centre, box, func):
         self.text = text
 
         if centre:
@@ -18,12 +18,15 @@ class Button:
         self.width = width
         self.height = height
 
+        self.box = box
+
         self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
         self.func = func
 
     def drawButton(self, screen):
-        pygame.draw.rect(screen, constants.CYAN, self.rect, 6, 2)
+        if not self.box:
+            pygame.draw.rect(screen, constants.GREEN, self.rect, 6, 2)
         text = constants.BIG_TEXT_FONT.render(str(self.text), 1, constants.BLACK)
         size = constants.BIG_TEXT_FONT.size(str(self.text))
         x = self.x + self.width // 2 - size[0] // 2
@@ -34,13 +37,14 @@ class Button:
 
 def makeMenu(game_instance):
     buttons = []
-    txts = ["Rogue Composer", "PLAY", "QUIT"]
-    funcs = [lambda _: 1, game_instance.run, lambda _: 0]
-
-    gap = constants.SCREEN_HEIGHT // (len(txts) + 1)
+    txts = ["PLAY", "QUIT"]
+    funcs = [lambda : 1, game_instance.run, lambda : 0]
+    buttons.append(Button("Rogue Composer", constants.SCREEN_WIDTH // 2, 100,
+                       300, 150, True, False, func))
+    gap = constants.SCREEN_HEIGHT // (len(txts) + 2)
     for indx, (txt, func) in enumerate(zip(txts, funcs)):
-        buttons.append(Button(txt, constants.SCREEN_WIDTH // 2, gap * (indx + 1),
-                       400, gap - 10, True, func))
+        buttons.append(Button(txt, constants.SCREEN_WIDTH // 2, gap * (indx + 2),
+                       300, gap - 20, True, True, func))
 
     return buttons
 
