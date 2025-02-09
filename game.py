@@ -11,6 +11,44 @@ from constants import *
 
 
 class Game:
+    def _load_entities(self, level_data):
+        # Create platforms
+        for platform_data in level_data["platforms"]:
+            platform = Platform(
+                platform_data["x"],
+                platform_data["y"],
+                platform_data["width"],
+                platform_data["height"],
+            )
+            self.platforms.add(platform)
+
+        # Calculate player's starting y-position
+        # player_start_y = level_data["platforms"][0]["y"] - 300
+        self.player.rect.center = (100, 300)
+        self.player.last_hit_time = 0
+        self.player.reset()
+
+        # Create enemies
+        for enemy_data in level_data["enemies"]:
+            print(enemy_data)
+            enemy = Enemy(
+                enemy_data["x"],
+                enemy_data["y"],
+                enemy_data["width"],
+                enemy_data["height"],
+                platforms=self.platforms,
+                behavior=enemy_data["behavior"],
+                color=eval(enemy_data["color"]),
+            )
+            self.enemies.add(enemy)
+            enemy.last_hit_time = 0
+
+        # Create apples
+        for apple_data in level_data["apples"]:
+            apple = Apple(apple_data["x"], apple_data["y"])
+            self.apples.add(apple)
+
+        self.all_sprites.add(self.player, *self.platforms, *self.enemies, *self.apples)
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -40,42 +78,35 @@ class Game:
         # Load level data
         level_data = levels[self.level_index]
 
-        # Create platforms
-        for platform_data in level_data["platforms"]:
-            platform = Platform(
-                platform_data["x"],
-                platform_data["y"],
-                platform_data["width"],
-                platform_data["height"],
-            )
-            self.platforms.add(platform)
+        
 
         # Calculate player's starting y-position to be on top of the first platform
-        player_start_y = level_data["platforms"][0]["y"] - 300
+        # player_start_y = level_data["platforms"][0]["y"] - 300
         self.player = Player()
-        self.player.rect.center = (100, player_start_y)
-        self.player.last_hit_time = 0
+        # self.player.rect.center = (100, player_start_y)
+        # self.player.last_hit_time = 0
 
-        # Create enemies
-        for enemy_data in level_data["enemies"]:
-            enemy = Enemy(
-                enemy_data["x"],
-                enemy_data["y"],
-                enemy_data["width"],
-                enemy_data["height"],
-                platforms=self.platforms,
-                color=eval(enemy_data["color"]),
-            )
-            self.enemies.add(enemy)
-            enemy.last_hit_time = 0
+        # # Create enemies
+        # for enemy_data in level_data["enemies"]:
+        #     enemy = Enemy(
+        #         enemy_data["x"],
+        #         enemy_data["y"],
+        #         enemy_data["width"],
+        #         enemy_data["height"],
+        #         self.platforms, #enemy_data["platforms"],
+        #         enemy_data["behavior"],
+        #         color=eval(enemy_data["color"]),
+        #     )
+        #     self.enemies.add(enemy)
+        #     enemy.last_hit_time = 0
 
-        # Create apples
-        for apple_data in level_data["apples"]:
-            apple = Apple(apple_data["x"], apple_data["y"])
-            self.apples.add(apple)
+        # # Create apples
+        # for apple_data in level_data["apples"]:
+        #     apple = Apple(apple_data["x"], apple_data["y"])
+        #     self.apples.add(apple)
 
-        self.all_sprites.add(self.player, *self.platforms, *self.enemies, *self.apples)
-
+        # self.all_sprites.add(self.player, *self.platforms, *self.enemies, *self.apples)
+        self.load_level()
         self.input_sequence = []
         self.playing_sequence = False
         self.is_note_playing = False  # Flag for note playing
@@ -127,41 +158,17 @@ class Game:
 
         # Load level data
         level_data = levels[self.level_index]
-
         # Create platforms
-        for platform_data in level_data["platforms"]:
-            platform = Platform(
-                platform_data["x"],
-                platform_data["y"],
-                platform_data["width"],
-                platform_data["height"],
-            )
-            self.platforms.add(platform)
+        # for platform_data in level_data["platforms"]:
+        #     platform = Platform(
+        #         platform_data["x"],
+        #         platform_data["y"],
+        #         platform_data["width"],
+        #         platform_data["height"],
+        #     )
+        #     self.platforms.add(platform)
 
-        # Calculate player's starting y-position
-        player_start_y = level_data["platforms"][0]["y"] - 300
-        self.player.rect.center = (100, player_start_y)
-        self.player.last_hit_time = 0
-
-        # Create enemies
-        for enemy_data in level_data["enemies"]:
-            enemy = Enemy(
-                enemy_data["x"],
-                enemy_data["y"],
-                enemy_data["width"],
-                enemy_data["height"],
-                platforms=self.platforms,
-                color=eval(enemy_data["color"]),
-            )
-            self.enemies.add(enemy)
-            enemy.last_hit_time = 0
-
-        # Create apples
-        for apple_data in level_data["apples"]:
-            apple = Apple(apple_data["x"], apple_data["y"])
-            self.apples.add(apple)
-
-        self.all_sprites.add(self.player, *self.platforms, *self.enemies, *self.apples)
+        self._load_entities(level_data)
 
     def draw_note(self, note, position, cursor):
         # Draw five horizontal lines for the staff
@@ -242,14 +249,18 @@ class Game:
                         enemy.health = False  # Enemy takes damage
                         enemy.last_hit_time = current_time
                     if enemy.is_stabbing() and (current_time - self.player.last_hit_time) > 500:
-                        self.player.health = False  # Player takes damage
+                        # self.player.health = False  # Player takes damage
+                        self.player.die()
                         self.player.last_hit_time = current_time
+                        # sys.exit
+                        print("the player has died")
 
             # Remove dead sprites
             dead_sprites = [
                 sprite
                 for sprite in self.all_sprites
-                if hasattr(sprite, "health") and not sprite.health
+                if hasattr(sprite, "state") and sprite.state == "dead"
+                # if hasattr(sprite, "health") and s
             ]
             for sprite in dead_sprites:
                 self.all_sprites.remove(sprite)

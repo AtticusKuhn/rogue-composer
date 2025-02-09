@@ -16,6 +16,20 @@ class PlayerState(Enum):
 
 
 class Player(pygame.sprite.Sprite):
+    def reset(self):
+        self.velocity: float = 0
+        self.velocityx: float = 0
+        self.on_ground: bool = False
+        self.state: PlayerState = PlayerState.STILL
+        # self.is_stabbing = False
+        # self.is_shielding = False
+        # self.health = True
+
+        self.animation_timer = 0
+        self.animation_speed = 8  # Adjust for animation speed
+        self.current_frame = 0
+        self.image = self.animations["still"][0]
+        self.last_hit_time = 0
     def __init__(self) -> None:
         """Initializes the Player object."""
         super().__init__()
@@ -28,26 +42,17 @@ class Player(pygame.sprite.Sprite):
         # self.rect.x = x
         # self.rect.y = y
         # self.rect: pygame.Rect = self.image.get_rect(center=(100, SCREEN_HEIGHT // 2))
-        self.velocity: float = 0
-        self.velocityx: float = 0
-        self.on_ground: bool = False
-        self.current_state: PlayerState = PlayerState.STILL
-        # self.is_stabbing = False
-        # self.is_shielding = False
-        self.health = True
 
-        self.animation_timer = 0
-        self.animation_speed = 8  # Adjust for animation speed
-        self.current_frame = 0
         self.animations = {"still": [], "walking": [], "stabbing": [], "dead": []}
         self.load_animations()
-        self.image = self.animations["still"][0]
-        self.rect = self.image.get_rect()
+        
+        # self.rect = self.image.get_rect()
+        self.reset()
         # self.rect = self.image.get_rect(center=(100, 10))
 
     @property
     def is_stabbing(self):
-        return self.current_state == PlayerState.STABBING
+        return self.state == PlayerState.STABBING
 
     def load_animations(self):
         base_path = "Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Characters(100x100)/Soldier/"
@@ -97,7 +102,9 @@ class Player(pygame.sprite.Sprite):
                 pygame.Rect(i * frame_width + 40, 20, 20, 40)
             )
             self.animations["dead"].append(frame)
-
+    def die(self):
+        self.state = PlayerState.DEAD
+    
     def handle_note(self, note: Note) -> None:
         # self.is_stabbing = False
         # self.is_shielding = False
@@ -110,26 +117,26 @@ class Player(pygame.sprite.Sprite):
             self.jump(BIG_JUMP_POWER)
         elif note == Note.A:
             self.velocityx = -MOVE_SPEED  # Move left
-            self.current_state = PlayerState.LEFT
+            self.state = PlayerState.LEFT
         elif note == Note.B:
             self.velocityx = MOVE_SPEED  # Move right
-            self.current_state = PlayerState.RIGHT
+            self.state = PlayerState.RIGHT
         elif note == Note.E:
             self.stab()
-        # elif note == Note.F:
-        #     self.shield()
-
+    @property
+    def is_dead(self):
+        return self.state == PlayerState.DEAD
     def stab(self):
-        if not self.health:
+        if self.is_dead:
             return
         print("Stab!")
-        self.current_state = PlayerState.STABBING
+        self.state = PlayerState.STABBING
         # self.is_stabbing = True
         self.current_frame = 0
 
     # def shield(self):
     #     print("Shield!")
-    #     self.current_state = PlayerState.SHIELDING
+    #     self.state = PlayerState.SHIELDING
     #     self.is_shielding = True
 
     def update(self, platforms, enemies):
@@ -162,8 +169,8 @@ class Player(pygame.sprite.Sprite):
             # elif self.is_shielding:
             #     print("Player shielded!")
             else:
-                self.health = False
-                self.current_state = PlayerState.DEAD
+                # self.health = False
+                self.state = PlayerState.DEAD
                 print("Player hit!")
         # Animation update
         self.animation_timer += 1
@@ -185,32 +192,33 @@ class Player(pygame.sprite.Sprite):
             self.rect = self.image.get_rect()
             self.rect.center = center
 
-        if not (self.is_stabbing) and not (self.current_state == PlayerState.DEAD):
+        if not (self.is_stabbing) and not (self.state == PlayerState.DEAD):
             if self.velocityx > 0:
-                self.current_state = PlayerState.RIGHT
+                self.state = PlayerState.RIGHT
             elif self.velocityx < 0:
-                self.current_state = PlayerState.LEFT
+                self.state = PlayerState.LEFT
             else:
-                self.current_state = PlayerState.STILL
+                self.state = PlayerState.STILL
 
-        if self.velocityx == 0 and self.current_state != PlayerState.STABBING:
-            self.current_state = PlayerState.STILL
+        if self.velocityx == 0 and self.state != PlayerState.STABBING:
+            self.state = PlayerState.STILL
 
     def get_animation_key(self):
-        if self.current_state == PlayerState.STABBING:
+        if self.state == PlayerState.STABBING:
             return "stabbing"
         elif (
-            self.current_state == PlayerState.LEFT
-            or self.current_state == PlayerState.RIGHT
+            self.state == PlayerState.LEFT
+            or self.state == PlayerState.RIGHT
         ):
             return "walking"
-        elif self.current_state == PlayerState.DEAD:
+        elif self.state == PlayerState.DEAD:
             return "dead"
         else:
             return "still"
 
     def jump(self, power):
-        if not self.health:
+        print("Jump!")
+        if self.is_dead:
             return
         if self.on_ground:
             self.velocity = power
