@@ -94,7 +94,7 @@ class Game:
         while True:
             self._handle_events()
             # Update player
-            self.player.update(self.platforms)
+            self.player.update(self.platforms, self.enemies)
 
             # Update enemies
             for enemy in self.enemies:
@@ -103,9 +103,9 @@ class Game:
             # Handle collisions
             for enemy in self.enemies:
                 if pygame.sprite.collide_rect(self.player, enemy):
-                    if self.player.is_stabbing and not enemy.is_shielding():
+                    if self.player.is_stabbing:
                         enemy.health = False  # Enemy takes damage
-                    if enemy.is_stabbing() and not self.player.is_shielding():
+                    if enemy.is_stabbing():
                         self.player.health = False # Player takes damage
 
             # Remove dead sprites

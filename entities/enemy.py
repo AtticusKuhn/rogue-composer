@@ -7,7 +7,7 @@ import random
 class EnemyState(Enum):
     IDLE = "idle"
     STABBING = "stabbing"
-    SHIELDING = "shielding"
+    # SHIELDING = "shielding"
     WALKING = "walking"
 
 
@@ -88,8 +88,8 @@ class Enemy(pygame.sprite.Sprite):
         if self.state == EnemyState.STABBING:
             self.state = EnemyState.IDLE
         elif self.state == EnemyState.IDLE:
-            self.state = EnemyState.SHIELDING
-        elif self.state == EnemyState.SHIELDING:
+            # self.state = EnemyState.SHIELDING
+        # elif self.state == EnemyState.SHIELDING:
             self.state = EnemyState.WALKING
         elif self.state == EnemyState.WALKING:
             self.state = EnemyState.STABBING
@@ -110,8 +110,8 @@ class Enemy(pygame.sprite.Sprite):
         # Placeholder for movement based on state
         if self.state == EnemyState.STABBING:
             self.stab()
-        elif self.state == EnemyState.SHIELDING:
-            self.shield()
+        # elif self.state == EnemyState.SHIELDING:
+        #     self.shield()
         elif self.state == EnemyState.WALKING:
             if player.rect.x > self.rect.x:
                 self.x_speed = 1
@@ -156,13 +156,13 @@ class Enemy(pygame.sprite.Sprite):
     def is_stabbing(self) -> bool:
         return self.state == EnemyState.STABBING
 
-    def is_shielding(self) -> bool:
-        return self.state == EnemyState.SHIELDING
+    # def is_shielding(self) -> bool:
+    #     return self.state == EnemyState.SHIELDING
 
     def stab(self):
         print("Enemy stabs!")
         self.state = EnemyState.STABBING
 
-    def shield(self):
-        print("Enemy shields!")
-        self.state = EnemyState.SHIELDING
+    # def shield(self):
+    #     print("Enemy shields!")
+    #     self.state = EnemyState.SHIELDING
