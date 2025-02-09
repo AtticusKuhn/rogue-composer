@@ -3,6 +3,8 @@ import pygame
 from game import Game
 import constants
 
+pygame.mixer.init()
+
 
 class Button:
     def __init__(self, text, x, y, width, height, centre, box, func):
@@ -39,7 +41,7 @@ class Button:
 def makeMenu(game_instance):
     buttons = []
     txts = ["PLAY", "QUIT"]
-    funcs = [game_instance.run, lambda: 0]
+    funcs = [lambda: (pygame.mixer.music.stop(), game_instance.run()), lambda: 0]
     buttons.append(
         Button(
             "Rogue Composer",
@@ -89,6 +91,10 @@ def menu(game_instance):
 
     background = game_instance.BACKGROUND_IMAGE
     choice = -1
+
+    pygame.mixer.music.load("Rogue Composer Main Theme MIDI.mp3")
+    pygame.mixer.music.play(-1)  # Play indefinitely
+
     while choice != 0:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -97,7 +103,6 @@ def menu(game_instance):
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 for button in buttons:
                     if button.rect.collidepoint(mouse_x, mouse_y):
-                        # choice = button.func(game_instance.screen)
                         choice = button.func()
 
         drawMenu(game_instance.screen, background, buttons)
