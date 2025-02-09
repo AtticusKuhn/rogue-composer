@@ -15,14 +15,14 @@ while killing or avoiding any enemies along the way.
 
 # Controls
 SPACE -> play/pause composition
-R -> reset
+R -> reset level (if you fail the level, you can reset).
 # Letter Notes
 Each note of the C-major scale corresponds to one
 action that the composer can take.
-A -> go right
-B -> go left
+A -> walk right
+B -> walk left
 C -> small jump
-D -> Big Jump
+D -> Big jump
 E -> Thrust/Stab
 F -> nothing
 G -> nothing
