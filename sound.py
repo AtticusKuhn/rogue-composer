@@ -1,5 +1,5 @@
 import pygame
-import pygame.midi
+# import pygame.midi
 
 from constants import *
 from enum import Enum
@@ -44,11 +44,11 @@ def toNote(note: str) -> Note:
 
 class SoundManager:
     def __init__(self):
-        pygame.midi.init()
-        self.player = pygame.midi.Output(0)
+        # pygame.midi.init()
+        # self.player = pygame.midi.Output(0)
 
         # set the instrument -----------------------------------------------------------
-        self.player.set_instrument(instrument)
+        # self.player.set_instrument(instrument)
         pygame.mixer.init(frequency=SAMPLE_RATE, size=-16, channels=2, buffer=512)
         self.note_sounds = {
             Note.C: 0,  # A4
@@ -80,9 +80,10 @@ class SoundManager:
             except pygame.error as e:
                 print(f"Error playing {filename}: {e}")
 
-    def quit(self):
-        del self.player
-        pygame.midi.quit()
+    # def quit(self):
+    #     del self.player
+    #     pygame.mid
+        # i.quit()
 
         # del device
         # octave = self.note_sounds[note] * 2
