@@ -1,5 +1,7 @@
 # Game constants
 import pygame
+
+pygame.font.init()
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 GRAVITY = 0.8
@@ -19,5 +21,3 @@ ORANGE = (255, 165, 0)
 
 BIG_TEXT_SIZE = 48
 BIG_TEXT_FONT = pygame.font.SysFont("futura", BIG_TEXT_SIZE)
-
-BACKGROUND_IMAGE = pygame.image.load("background_image.png").convert()

@@ -56,9 +56,9 @@ def drawMenu(screen, background, buttons):
 
 
 def menu(game_instance):
-    buttons = makeMenu()
+    buttons = makeMenu(game_instance)
     
-    background = constants.BACKGROUND_IMAGE
+    background = game_instance.BACKGROUND_IMAGE
     choice = -1
     while choice != 0:
         for event in pygame.event.get():
