@@ -3,21 +3,6 @@ import pygame
 from game import Game
 import constants
 
-BLACK = (0, 0, 0)
-GREEN = (0, 255, 0)
-LIME_GREEN = (30, 255, 70)
-RED = (255, 0, 0)
-BLUE = (0, 0, 255)
-GREY = (127, 127, 127)
-PINK = (230, 120, 120)
-CYAN = (5, 255, 255)
-ORANGE = (255, 165, 0)
-
-BIG_TEXT_SIZE = 48
-BIG_TEXT_FONT = pygame.font.SysFont("futura", BIG_TEXT_SIZE)
-
-BACKGROUND_IMAGE = pygame.image.load("background_image.png").convert()
-
 class Button:
     def __init__(self, text, x, y, width, height, centre, func):
         self.text = text
@@ -38,9 +23,9 @@ class Button:
         self.func = func
 
     def drawButton(self, screen):
-        pygame.draw.rect(screen, CYAN, self.rect, 6, 2)
-        text = BIG_TEXT_FONT.render(str(self.text), 1, BLACK)
-        size = BIG_TEXT_FONT.size(str(self.text))
+        pygame.draw.rect(screen, constants.CYAN, self.rect, 6, 2)
+        text = constants.BIG_TEXT_FONT.render(str(self.text), 1, constants.BLACK)
+        size = constants.BIG_TEXT_FONT.size(str(self.text))
         x = self.x + self.width // 2 - size[0] // 2
         y = self.y + self.height // 2 - size[1] // 2
 
@@ -72,7 +57,8 @@ def drawMenu(screen, background, buttons):
 
 def menu(game_instance):
     buttons = makeMenu()
-    background = BACKGROUND_IMAGE
+    
+    background = constants.BACKGROUND_IMAGE
     choice = -1
     while choice != 0:
         for event in pygame.event.get():
