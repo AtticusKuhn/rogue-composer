@@ -103,6 +103,7 @@ class Player(pygame.sprite.Sprite):
             )
             self.animations["dead"].append(frame)
     def die(self):
+        print("The player has died")
         self.state = PlayerState.DEAD
     
     def handle_note(self, note: Note) -> None:
@@ -163,15 +164,20 @@ class Player(pygame.sprite.Sprite):
         enemy_hits = pygame.sprite.spritecollide(self, enemies, False)
         for hit in enemy_hits:
             self.velocityx = 0
+            if self.velocityx > 0:
+                self.rect.left = hit.rect.right
+            elif self.velocityx < 0:
+                self.rect.right = hit.rect.left
             if self.is_stabbing:
-                hit.health = False
-                print("Enemy hit!")
+                hit.die()
+                # hit.health = False
+                # print("Enemy hit!")
             # elif self.is_shielding:
             #     print("Player shielded!")
-            else:
-                # self.health = False
-                self.state = PlayerState.DEAD
-                print("Player hit!")
+            # else:
+            #     # self.health = False
+            #     self.state = PlayerState.DEAD
+            #     print("Player hit!")
         # Animation update
         self.animation_timer += 1
         if self.animation_timer >= self.animation_speed:

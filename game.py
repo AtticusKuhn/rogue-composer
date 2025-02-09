@@ -275,7 +275,7 @@ class Game:
                 (0, 0),
             )
             # Draw player
-            if self.player.facing == "right":
+            if self.player.velocityx >= 0:
                 self.screen.blit(self.player.image, self.player.rect)
             else:
                 self.screen.blit(pygame.transform.flip(self.player.image,

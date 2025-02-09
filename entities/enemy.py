@@ -104,31 +104,12 @@ class Enemy(pygame.sprite.Sprite):
             return
 
         self.behavior_index = (self.behavior_index + 1) % len(self.behavior)
-
-
-    def update(self, player, is_note_playing):
-        if not self.behavior:
-            return
-
-        if is_note_playing and not self.acted_this_note:
-            if player.rect.x < self.rect.x:
-                self.x_speed = -1  # Move left
-                self.facing = "left"
-            else:
-                self.x_speed = 1  # Move right
-                self.facing = "right"
-            self.state = EnemyState.WALKING
-            self.acted_this_note = True
-        elif not is_note_playing:
-            self.acted_this_note = False
-            self.state = EnemyState.IDLE
-            self.x_speed = 0
-
-        # Placeholder for movement based on state
+        self.handle_action()
+    def handle_action(self):
         current_action = self.behavior[self.behavior_index]
 
         if current_action == "stab":
-            self.state = EnemyState.STABBING
+            # self.state = EnemyState.STABBING
             self.stab()
         # elif current_action == "shield":
         #     self.state = EnemyState.SHIELDING
@@ -145,6 +126,27 @@ class Enemy(pygame.sprite.Sprite):
         else:
             print(f"Warning: Unknown action '{current_action}'")
 
+    def update(self, player, is_note_playing):
+        if not self.behavior:
+            return
+
+        # if is_note_playing and not self.acted_this_note:
+        #     # if player.rect.x < self.rect.x:
+        #     #     self.x_speed = -1  # Move left
+        #     #     self.facing = "left"
+        #     # else:
+        #     #     self.x_speed = 1  # Move right
+        #     #     self.facing = "right"
+        #     # self.state = EnemyState.WALKING
+        #     self.acted_this_note = True
+        # elif not is_note_playing:
+        #     self.acted_this_note = False
+        #     self.state = EnemyState.IDLE
+        #     self.x_speed = 0
+
+        # Placeholder for movement based on state
+
+
         self.y_speed += GRAVITY
 
         self.rect.x += self.x_speed
@@ -153,19 +155,29 @@ class Enemy(pygame.sprite.Sprite):
         # print(f"self.platform_group = {self.platform_group}")
         # for p in self.platform_group:
         #     print(f"p.rect = {p.rect}")
-        hits = pygame.sprite.spritecollide(self, self.platform_group, False)
-        for hit in hits:
-            if self.x_speed > 0:
-                self.rect.right = hit.rect.left
-            elif self.x_speed < 0:
-                self.rect.left = hit.rect.right
+        # hits = pygame.sprite.spritecollide(self, self.platform_group, False)
+        # for hit in hits:
+        #     if self.x_speed > 0:
+        #         self.rect.right = hit.rect.left
+        #     elif self.x_speed < 0:
+        #         self.rect.left = hit.rect.right
 
-            self.state = EnemyState.IDLE
-            self.x_speed = 0
+        #     self.state = EnemyState.IDLE
+        #     self.x_speed = 0
 
         self.rect.y += self.y_speed
-        hits = pygame.sprite.spritecollide(self, self.platform_group, False)
-        for hit in hits:
+        player_group = pygame.sprite.GroupSingle(sprite = player)
+
+        player_hits = pygame.sprite.spritecollide(self, player_group, False)
+        platform_hits = pygame.sprite.spritecollide(self, self.platform_group, False)
+        for hit in player_hits:
+            print("Enemy hit player!")
+            self.x_speed = 0
+            if self.x_speed > 0:
+                self.rect.left = hit.rect.right
+            elif self.x_speed < 0:
+                self.rect.right = hit.rect.left
+        for hit in platform_hits:
             if self.y_speed > 0:
                 self.rect.bottom = hit.rect.top
                 self.on_ground = True
@@ -193,7 +205,9 @@ class Enemy(pygame.sprite.Sprite):
             center = self.rect.center
             self.rect = self.image.get_rect()
             self.rect.center = center
-    
+    def die(self):
+        print("enemy died")
+        self.state = EnemyState.DEAD
     def get_animation_key(self):
         if self.state == EnemyState.DEAD:
             return "dead"
