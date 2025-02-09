@@ -123,7 +123,6 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                sys.exit()
 
             if event.type == pygame.KEYDOWN:
                 if not self.playing_sequence:
@@ -415,5 +414,10 @@ class Game:
                 self._show_game_over_screen()
             elif self.game_state == GameState.GAME_WON:
                 self._show_game_won_screen()
+                    # for event in pygame.event.get()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
             pygame.display.flip()
             self.clock.tick(60)
