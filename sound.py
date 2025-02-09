@@ -1,10 +1,8 @@
 import pygame
 import pygame.midi
 
-import numpy as np
 from constants import *
 from enum import Enum
-import time
 
 
 class Note(Enum):

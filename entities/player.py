@@ -3,7 +3,6 @@ from constants import *
 from enum import Enum
 from sound import Note
 import os
-import random
 
 
 class PlayerState(Enum):

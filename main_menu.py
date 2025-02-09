@@ -1,6 +1,5 @@
 import pygame
 
-from game import Game
 import constants
 
 pygame.mixer.init()

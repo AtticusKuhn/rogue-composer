@@ -1,5 +1,4 @@
 from constants import *
-import pygame
 
 level_0_platforms = [
     {"x": 0, "y": SCREEN_HEIGHT - 40, "width": SCREEN_WIDTH, "height": 40}
