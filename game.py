@@ -123,6 +123,7 @@ class Game:
 
             if event.type == pygame.KEYDOWN:
                 if not self.playing_sequence:
+                    # print(f"event.key = {event.key}, delete = {pygame.K_DELETE}")   
                     if event.unicode in "abcdefg":
                         note = toNote(event.unicode)
                         self.input_sequence.append(note)
@@ -130,7 +131,35 @@ class Game:
                     elif event.key == pygame.K_SPACE:
                         self.playing_sequence = True
                         self.execute_sequence()
-
+                    elif event.key == pygame.K_BACKSPACE:
+                        print("delete")
+                        self.input_sequence.pop()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if not self.playing_sequence:
+                    mouse_x, mouse_y = event.pos
+                    staff_start_y = SCREEN_HEIGHT - 250
+                    staff_bottom = staff_start_y + 80  # 4 line spacings (20 each)
+                    if staff_start_y <= mouse_y <= staff_bottom:
+                        # Calculate closest note position
+                        note_y_positions = {
+                            Note.A: staff_start_y + 70,
+                            Note.B: staff_start_y + 60,
+                            Note.C: staff_start_y + 50,
+                            Note.D: staff_start_y + 40,
+                            Note.E: staff_start_y + 30,
+                            Note.F: staff_start_y + 20,
+                            Note.G: staff_start_y + 10,
+                        }
+                        closest_note = None
+                        min_diff = float('inf')
+                        for note, y in note_y_positions.items():
+                            diff = abs(mouse_y - y)
+                            if diff < min_diff:
+                                min_diff = diff
+                                closest_note = note
+                        if closest_note:
+                            self.input_sequence.append(closest_note)
+                            self.sound_manager.play_note(closest_note)
             if event.type == pygame.USEREVENT:
                 self.execute_sequence()
 
@@ -149,7 +178,7 @@ class Game:
             pygame.time.set_timer(pygame.USEREVENT, 0)
             self.playing_sequence = False
             self.is_note_playing = False  # Reset flag
-            
+
 
     def _handle_enemy_collisions(self):
         current_time = pygame.time.get_ticks()
@@ -204,8 +233,7 @@ class Game:
         #     self.platforms.add(platform)
 
         self._load_entities(level_data)
-
-    def draw_note(self, note, position, cursor):
+    def draw_staves(self):
         # Draw five horizontal lines for the staff
         staff_start_y = SCREEN_HEIGHT - 250
         staff_line_spacing = 20
@@ -217,6 +245,10 @@ class Game:
                 (SCREEN_WIDTH, staff_start_y + i * staff_line_spacing),
                 2,
             )
+    def draw_note(self, note, position, cursor):
+        # # Draw five horizontal lines for the staff
+        staff_start_y = SCREEN_HEIGHT - 250
+        staff_line_spacing = 20
 
         # Calculate note position on the staff
         x = 10 + position * 60
@@ -276,7 +308,6 @@ class Game:
                     self.load_level()
                 else:
                     print("Game Won!")
-                    # TODO: Implement proper game completion screen/logic
                     # For now, just quit the game
                     self.game_state = GameState.GAME_WON
                     # pygame.quit()
@@ -310,6 +341,7 @@ class Game:
             pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT)),
             (0, 0),
         )
+        self.draw_staves()
         # Draw player
         if self.player.velocityx >= 0:
             self.screen.blit(self.player.image, self.player.rect)
@@ -365,7 +397,6 @@ class Game:
         self.screen.blit(text, (x, y))
     def run(self):
         while True:
-            print(f"game state = {self.game_state}")
             if self.game_state == GameState.PLAYING:
                 self.play_game()
             elif self.game_state == GameState.GAME_OVER:
@@ -374,4 +405,3 @@ class Game:
                 self._show_game_won_screen()
             pygame.display.flip()
             self.clock.tick(60)
-      

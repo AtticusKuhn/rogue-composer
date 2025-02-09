@@ -147,26 +147,29 @@ class Player(pygame.sprite.Sprite):
     #     self.is_shielding = True
 
     def update(self, platforms, enemies):
-        # Horizontal movement
+        # Horizontal movement and collision
         self.rect.x += self.velocityx
-        # Vertical movement
+        hits_x = pygame.sprite.spritecollide(self, platforms, False)
+        for hit in hits_x:
+            if self.velocityx > 0:  # Moving right
+                self.rect.right = hit.rect.left
+            elif self.velocityx < 0:  # Moving left
+                self.rect.left = hit.rect.right
+            self.velocityx = 0  # Stop horizontal movement when colliding
+
+        # Vertical movement and collision
         self.velocity += GRAVITY
         self.rect.y += self.velocity
-
-        # Platform collision
-        self.on_ground = False
-        if self.rect.x < 0:
-            self.rect.x = 0
-            self.velocityx
-        hits = pygame.sprite.spritecollide(self, platforms, False)
-        for hit in hits:
-            if self.velocity > 0:
+        hits_y = pygame.sprite.spritecollide(self, platforms, False)
+        
+        for hit in hits_y:
+            if self.velocity > 0:  # Falling down
                 self.rect.bottom = hit.rect.top
-                self.velocity = 0
                 self.on_ground = True
-            elif self.velocity < 0:
+            elif self.velocity < 0:  # Moving up
                 self.rect.top = hit.rect.bottom
-                self.velocity = 0
+            self.velocity = 0  # Stop vertical movement when colliding
+
         enemy_hits = pygame.sprite.spritecollide(self, enemies, False)
         for hit in enemy_hits:
             self.velocityx = 0
