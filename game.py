@@ -141,6 +141,8 @@ class Game:
                         if self.input_sequence:
                             self.input_sequence.pop()
                         # self.input_sequence.pop()
+                    elif event.key == pygame.K_r: 
+                        self.load_level()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if not self.playing_sequence:
                     mouse_x, mouse_y = event.pos

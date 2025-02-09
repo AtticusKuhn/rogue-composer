@@ -93,7 +93,9 @@ def menu(game_instance):
     background = game_instance.BACKGROUND_IMAGE
     choice = -1
 
-    pygame.mixer.music.load("Rogue Composer Main Theme MIDI.mp3")
+    # pygame.mixer.music.load("Rogue Composer Main Theme MIDI.mp3")
+    pygame.mixer.music.load("output.mp3")
+
     pygame.mixer.music.play(-1)  # Play indefinitely
 
     while choice != 0:
