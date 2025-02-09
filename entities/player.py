@@ -138,6 +138,9 @@ class Player(pygame.sprite.Sprite):
 
         # Platform collision
         self.on_ground = False
+        if self.rect.x < 0:
+            self.rect.x = 0
+            self.velocityx
         hits = pygame.sprite.spritecollide(self, platforms, False)
         for hit in hits:
             if self.velocity > 0:

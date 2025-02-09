@@ -95,10 +95,51 @@ class Game:
             self.is_note_playing = False  # Reset flag
 
     def draw_note(self, note, position, cursor):
-        x = 10 + position * 60  # Horizontal spacing
-        y = self.note_positions.get(note, SCREEN_HEIGHT - 100) - 50
+        # Draw five horizontal lines for the staff
+        staff_start_y = SCREEN_HEIGHT - 250
+        staff_line_spacing = 20
+        for i in range(5):
+            pygame.draw.line(
+                self.screen,
+                (255, 255, 255),
+                (0, staff_start_y + i * staff_line_spacing),
+                (SCREEN_WIDTH, staff_start_y + i * staff_line_spacing),
+                2,
+            )
+
+        # Calculate note position on the staff
+        x = 10 + position * 60
+        note_positions = {  # relative to staff_start_y
+            Note.A: staff_start_y + staff_line_spacing * 3.5,
+            Note.B: staff_start_y + staff_line_spacing * 3, # on space below
+            Note.C: staff_start_y + staff_line_spacing * 2.5,  # on space above
+            Note.D: staff_start_y + staff_line_spacing * 2,
+            Note.E: staff_start_y + staff_line_spacing * 1.5,
+            Note.F: staff_start_y + staff_line_spacing * 1,
+            Note.G: staff_start_y + staff_line_spacing * 0.5,
+            
+        }
+
+        y = note_positions.get(note, staff_start_y)
+
         color = (0, 255, 0) if cursor == position else (255, 255, 255)
-        pygame.draw.rect(self.screen, color, (x, y, 40, 20))
+        pygame.draw.circle(self.screen, color, (x, int(y)), 10)
+
+        # Draw stem
+        stem_length = 30
+        staff_middle_y = staff_start_y + staff_line_spacing * 2  # 3rd line
+        if y > staff_middle_y:
+            stem_start_x = x + 10
+            stem_start_y = y
+            stem_end_x = x + 10
+            stem_end_y = y - stem_length
+        else:
+            stem_start_x = x - 10
+            stem_start_y = y
+            stem_end_x = x - 10
+            stem_end_y = y + stem_length
+
+        pygame.draw.line(self.screen, color, (stem_start_x, int(stem_start_y)), (stem_end_x, int(stem_end_y)), 2)
 
     def run(self):
         while True:

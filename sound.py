@@ -63,20 +63,21 @@ class SoundManager:
         }
 
         self.midi_note_mapping = {
-            Note.C: 48,  # C3
-            Note.D: 50,  # D3
-            Note.E: 52,  # E3
-            Note.F: 53,  # F3
-            Note.G: 55,  # G3
-            Note.A: 57,  # A3
-            Note.B: 59,  # B3
+            Note.A: 0,  # A3
+            Note.B: 1,  # B3
+            Note.C: 2,  # C3
+            Note.D: 3,  # D3
+            Note.E: 4,  # E3
+            Note.F: 5,  # F3
+            Note.G: 6,  # G3
+            
         }
 
 
     def play_note(self, note: Note):
         if note in self.midi_note_mapping:
             midi_note = self.midi_note_mapping[note]
-            filename = f"Piano{midi_note + 111 - 48}.ogg" # filenames start from 111, and C3 is 48
+            filename = f"Piano{midi_note + 111}.ogg" # filenames start from 111, and C3 is 48
             try:
                 sound = pygame.mixer.Sound(filename)
                 sound.play()
