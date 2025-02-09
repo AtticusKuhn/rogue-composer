@@ -13,7 +13,7 @@ class Game:
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        self.BACKGROUND_IMAGE = pygame.image.load("background_image.png").convert()
+        self.BACKGROUND_IMAGE = pygame.image.load("Forest.png").convert()
         pygame.display.set_caption("Synesthesia")
         self.clock = pygame.time.Clock()
         self.all_sprites = pygame.sprite.Group()

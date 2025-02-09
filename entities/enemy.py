@@ -140,8 +140,10 @@ class Enemy(pygame.sprite.Sprite):
             # self.x_speed = 0
             if self.x_speed > 0:
                 self.rect.left = hit.rect.right
+                # self.state = EnemyState.IDLE
             else:
                 self.rect.right = hit.rect.left
+            self.state = EnemyState.IDLE
                 # self.velocity = 0
             # self.on_ground = True
             # elif self.velocity < 0:

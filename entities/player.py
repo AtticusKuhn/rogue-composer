@@ -21,7 +21,7 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
         self.image: pygame.Surface = pygame.Surface((60, 100))
         # self.image.fill((0, 255, 0))
-        self.image.fill((0, 255, 0))
+        # self.image.fill((0, 255, 0))
         self.rect = self.image.get_rect()
         # self.rect: pygame.Rect = self.image.get_rect(center=(100, SCREEN_HEIGHT // 2))
         # self.rect = self.image.get_rect()
@@ -41,7 +41,8 @@ class Player(pygame.sprite.Sprite):
         self.current_frame = 0
         self.animations = {"still": [], "walking": [], "stabbing": [], "dead": []}
         self.load_animations()
-        # self.image = self.animations["still"][0]
+        self.image = self.animations["still"][0]
+        self.rect = self.image.get_rect()
         # self.rect = self.image.get_rect(center=(100, 10))
 
     @property
