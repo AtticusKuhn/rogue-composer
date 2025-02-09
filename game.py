@@ -429,6 +429,10 @@ class Game:
         x = SCREEN_WIDTH // 2 - size[0] // 2
         y = SCREEN_HEIGHT // 2 - size[1] // 2
         self.screen.blit(text, (x, y))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
 
 
     def run(self):
