@@ -68,7 +68,8 @@ def menu(game_instance):
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 for button in buttons:
                     if button.rect.collidepoint(mouse_x, mouse_y):
-                        choice = button.func(game_instance.screen)
+                        # choice = button.func(game_instance.screen)
+                        choice = button.func()
 
         drawMenu(game_instance.screen, background, buttons)
     return 0
