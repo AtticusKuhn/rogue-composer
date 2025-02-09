@@ -1,6 +1,7 @@
 import pygame
 import sys
 from entities.player import Player
+
 # from entities.player import Player
 from entities.enemy import Enemy
 from entities.platforms import Platform
@@ -12,7 +13,7 @@ class Game:
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-        self.BACKGROUND_IMAGE = pygame.image.load("background_image.png").convert()
+        self.BACKGROUND_IMAGE = pygame.image.load("Forest.png").convert()
         pygame.display.set_caption("Synesthesia")
         self.clock = pygame.time.Clock()
         self.all_sprites = pygame.sprite.Group()
@@ -41,8 +42,16 @@ class Game:
         self.player = Player()
         # self.player.rect.center = (100, player_start_y)
         # Create enemies
-        self.enemies.add(Enemy(300, SCREEN_HEIGHT - 100, 30, 50,platforms = self.platforms, color = BLUE))
-        self.enemies.add(Enemy(500, SCREEN_HEIGHT - 100, 30, 50,platforms = self.platforms, color = BLUE))
+        self.enemies.add(
+            Enemy(
+                300, SCREEN_HEIGHT - 100, 30, 50, platforms=self.platforms, color=BLUE
+            )
+        )
+        self.enemies.add(
+            Enemy(
+                500, SCREEN_HEIGHT - 100, 30, 50, platforms=self.platforms, color=BLUE
+            )
+        )
 
         self.all_sprites.add(self.player, *self.platforms, *self.enemies)
 
@@ -107,10 +116,14 @@ class Game:
                     if self.player.is_stabbing:
                         enemy.health = False  # Enemy takes damage
                     if enemy.is_stabbing():
-                        self.player.health = False # Player takes damage
+                        self.player.health = False  # Player takes damage
 
             # Remove dead sprites
-            dead_sprites = [sprite for sprite in self.all_sprites if hasattr(sprite, "health") and not sprite.health]
+            dead_sprites = [
+                sprite
+                for sprite in self.all_sprites
+                if hasattr(sprite, "health") and not sprite.health
+            ]
             for sprite in dead_sprites:
                 self.all_sprites.remove(sprite)
                 if sprite in self.enemies:
@@ -119,7 +132,10 @@ class Game:
             # Drawing
             self.screen.fill((0, 0, 0))  # Clear screen
             background_image = pygame.image.load("background_image.png")
-            self.screen.blit(pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT)), (0, 0))
+            self.screen.blit(
+                pygame.transform.scale(background_image, (SCREEN_WIDTH, SCREEN_HEIGHT)),
+                (0, 0),
+            )
             # Draw player
             self.screen.blit(self.player.image, self.player.rect)
 
@@ -131,8 +147,7 @@ class Game:
             for platform in self.platforms:
                 self.screen.blit(platform.image, platform.rect)
 
-            #self.all_sprites.draw(self.screen) # No longer needed
-
+            # self.all_sprites.draw(self.screen) # No longer needed
 
             # Draw input sequence
             for i, note in enumerate(self.input_sequence):

@@ -4,6 +4,8 @@ from enum import Enum
 from sound import Note
 import os
 import random
+
+
 class EnemyState(Enum):
     IDLE = "idle"
     STABBING = "stabbing"
@@ -12,8 +14,8 @@ class EnemyState(Enum):
 
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, x, y, width, height,platforms, color=RED):
-        
+    def __init__(self, x, y, width, height, platforms, color=RED):
+
         super().__init__()
         # self.image = pygame.Surface([60, 100])
         self.platforms = platforms
@@ -32,14 +34,9 @@ class Enemy(pygame.sprite.Sprite):
         self.animation_timer = 0
         self.animation_speed = 8
         self.current_frame = 0
-        self.animations = {
-            "idle": [],
-            "walking": [],
-            "stabbing": [],
-        }
+        self.animations = {"idle": [], "walking": [], "stabbing": [], "dead": []}
         self.load_animations()
         self.image = self.animations["idle"][0]
-
 
     def load_animations(self):
         base_path = "Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Characters(100x100)/Orc/Orc/"
@@ -69,7 +66,6 @@ class Enemy(pygame.sprite.Sprite):
         walk_spritesheet = pygame.image.load(
             os.path.join(base_path, "Orc-Walk.png")
         ).convert_alpha()
-       
 
         for i in range(8):  # 4 walking frames
             frame = walk_spritesheet.subsurface(
@@ -81,24 +77,37 @@ class Enemy(pygame.sprite.Sprite):
             os.path.join(base_path, "Orc-Attack01.png")
         ).convert_alpha()
         for i in range(6):  # 3 stabbing frames
-            frame = stabbing_spritesheet.subsurface(pygame.Rect(i*frame_width + 40, 20, 20, 40))
+            frame = stabbing_spritesheet.subsurface(
+                pygame.Rect(i * frame_width + 40, 20, 20, 40)
+            )
             self.animations["stabbing"].append(frame)
+        # Dead animation
+        dead_spritesheet = pygame.image.load(
+            os.path.join(base_path, "Orc-Death.png")
+        ).convert_alpha()
+
+        for i in range(4):  # 4 dead frames
+            frame = dead_spritesheet.subsurface(
+                pygame.Rect(i * frame_width + 40, 20, 20, 40)
+            )
+            self.animations["dead"].append(frame)
 
     def handle_note(self, note: Note):
         if self.state == EnemyState.STABBING:
             self.state = EnemyState.IDLE
         elif self.state == EnemyState.IDLE:
             # self.state = EnemyState.SHIELDING
-        # elif self.state == EnemyState.SHIELDING:
+            # elif self.state == EnemyState.SHIELDING:
             self.state = EnemyState.WALKING
         elif self.state == EnemyState.WALKING:
             self.state = EnemyState.STABBING
         else:
             raise ValueError(f"Invalid state: {self.state}")
+
     def update(self, player, is_note_playing):
         if is_note_playing and not self.acted_this_note:
             # Placeholder for AI decision-making
-            #self.state = EnemyState.STABBING  # Default action for now
+            # self.state = EnemyState.STABBING  # Default action for now
             # self.x_speed = -1 #move towards the player
             # self.state = EnemyState.WALKING
             self.acted_this_note = True
@@ -124,28 +133,45 @@ class Enemy(pygame.sprite.Sprite):
         for hit in hits:
             # if self.velocity > 0:
             self.rect.bottom = hit.rect.top
-                # self.velocity = 0
+            # self.velocity = 0
             self.on_ground = True
+        player_hits = pygame.sprite.spritecollide(self, self.platforms, False)
+        for hit in player_hits:
+            # self.x_speed = 0
+            if self.x_speed > 0:
+                self.rect.left = hit.rect.right
+                # self.state = EnemyState.IDLE
+            else:
+                self.rect.right = hit.rect.left
+            self.state = EnemyState.IDLE
+                # self.velocity = 0
+            # self.on_ground = True
             # elif self.velocity < 0:
             #     self.rect.top = hit.rect.bottom
-                # self.velocity = 0
+            # self.velocity = 0
         # Animation update
         self.animation_timer += 1
         if self.animation_timer >= self.animation_speed:
             self.animation_timer = 0
-            self.current_frame = (self.current_frame + 1) % len(self.animations[self.get_animation_key()])
+            self.current_frame = (self.current_frame + 1) % len(
+                self.animations[self.get_animation_key()]
+            )
             # self.image = self.animations[self.get_animation_key()][self.current_frame]
             # if random.choice([True, False]):
-                # self.image = self.animations[self.get_animation_key()][self.current_frame]
-            self.image = pygame.transform.scale(self.animations[self.get_animation_key()][self.current_frame], (60,100))
+            # self.image = self.animations[self.get_animation_key()][self.current_frame]
+            self.image = pygame.transform.scale(
+                self.animations[self.get_animation_key()][self.current_frame], (60, 100)
+            )
 
             # else:
-                # self.image.fill((0, 255, 0))
+            # self.image.fill((0, 255, 0))
             center = self.rect.center
             self.rect = self.image.get_rect()
             self.rect.center = center
-          
+
     def get_animation_key(self):
+        if not self.health:
+            return "dead"
         if self.state == EnemyState.WALKING:
             return "walking"
         elif self.state == EnemyState.STABBING:

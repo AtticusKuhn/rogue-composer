@@ -56,4 +56,4 @@ class SoundManager:
             player.note_off(64, 127)
             del player
             # octave = self.note_sounds[note] * 2
-            # octave.play()   
+            # octave.play()

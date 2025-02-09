@@ -3,6 +3,7 @@ import pygame
 from game import Game
 import constants
 
+
 class Button:
     def __init__(self, text, x, y, width, height, centre, box, func):
         self.text = text
@@ -25,7 +26,7 @@ class Button:
         self.func = func
 
     def drawButton(self, screen):
-        if not self.box:
+        if self.box:
             pygame.draw.rect(screen, constants.GREEN, self.rect, 6, 2)
         text = constants.BIG_TEXT_FONT.render(str(self.text), 1, constants.BLACK)
         size = constants.BIG_TEXT_FONT.size(str(self.text))
@@ -38,13 +39,33 @@ class Button:
 def makeMenu(game_instance):
     buttons = []
     txts = ["PLAY", "QUIT"]
-    funcs = [lambda : 1, game_instance.run, lambda : 0]
-    buttons.append(Button("Rogue Composer", constants.SCREEN_WIDTH // 2, 100,
-                       300, 150, True, False, func))
+    funcs = [game_instance.run, lambda: 0]
+    buttons.append(
+        Button(
+            "Rogue Composer",
+            constants.SCREEN_WIDTH // 2,
+            100,
+            300,
+            150,
+            True,
+            False,
+            lambda: 1,
+        )
+    )
     gap = constants.SCREEN_HEIGHT // (len(txts) + 2)
     for indx, (txt, func) in enumerate(zip(txts, funcs)):
-        buttons.append(Button(txt, constants.SCREEN_WIDTH // 2, gap * (indx + 2),
-                       300, gap - 20, True, True, func))
+        buttons.append(
+            Button(
+                txt,
+                constants.SCREEN_WIDTH // 2,
+                gap * (indx + 2),
+                300,
+                gap - 20,
+                True,
+                True,
+                func,
+            )
+        )
 
     return buttons
 
@@ -52,7 +73,11 @@ def makeMenu(game_instance):
 def drawMenu(screen, background, buttons):
     # screen.fill(BLACK)
 
-    screen.blit(background, (0, 0))
+    # screen.blit(background, (0, 0))
+    screen.blit(
+        pygame.transform.scale(background, (constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT)),
+        (0, 0),
+    )
     for button in buttons:
         button.drawButton(screen)
 
@@ -61,7 +86,7 @@ def drawMenu(screen, background, buttons):
 
 def menu(game_instance):
     buttons = makeMenu(game_instance)
-    
+
     background = game_instance.BACKGROUND_IMAGE
     choice = -1
     while choice != 0:

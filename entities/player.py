@@ -4,6 +4,8 @@ from enum import Enum
 from sound import Note
 import os
 import random
+
+
 class PlayerState(Enum):
     LEFT = "left"
     RIGHT = "right"
@@ -12,13 +14,14 @@ class PlayerState(Enum):
     DEAD = "dead"
     # SHIELDING = "shielding"
 
+
 class Player(pygame.sprite.Sprite):
     def __init__(self) -> None:
         """Initializes the Player object."""
         super().__init__()
         self.image: pygame.Surface = pygame.Surface((60, 100))
         # self.image.fill((0, 255, 0))
-        self.image.fill((0, 255, 0))
+        # self.image.fill((0, 255, 0))
         self.rect = self.image.get_rect()
         # self.rect: pygame.Rect = self.image.get_rect(center=(100, SCREEN_HEIGHT // 2))
         # self.rect = self.image.get_rect()
@@ -36,18 +39,16 @@ class Player(pygame.sprite.Sprite):
         self.animation_timer = 0
         self.animation_speed = 8  # Adjust for animation speed
         self.current_frame = 0
-        self.animations = {
-            "still": [],
-            "walking": [],
-            "stabbing": [],
-            "dead": []
-        }
+        self.animations = {"still": [], "walking": [], "stabbing": [], "dead": []}
         self.load_animations()
-        # self.image = self.animations["still"][0]
+        self.image = self.animations["still"][0]
+        self.rect = self.image.get_rect()
         # self.rect = self.image.get_rect(center=(100, 10))
+
     @property
     def is_stabbing(self):
-        return self
+        return self.current_state == PlayerState.STABBING
+
     def load_animations(self):
         base_path = "Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Characters(100x100)/Soldier/"
         frame_width = 100
@@ -63,7 +64,7 @@ class Player(pygame.sprite.Sprite):
                 pygame.Rect(i * frame_width + 40, 0 + 20, 20, 40)
             )
             self.animations["still"].append(frame)
-        
+
         # Walking animation
         walk_spritesheet = pygame.image.load(
             os.path.join(base_path, "Soldier/Soldier-Walk.png")
@@ -75,25 +76,27 @@ class Player(pygame.sprite.Sprite):
             )
             self.animations["walking"].append(frame)
 
-
         # Stabbing animation
         stabbing_spritesheet = pygame.image.load(
             os.path.join(base_path, "Soldier/Soldier-Attack01.png")
         ).convert_alpha()
-    
+
         for i in range(6):  # 3 stabbing frames
-            frame = stabbing_spritesheet.subsurface(pygame.Rect(i*frame_width + 40, 20, 20, 40))
+            frame = stabbing_spritesheet.subsurface(
+                pygame.Rect(i * frame_width + 40, 20, 20, 40)
+            )
             self.animations["stabbing"].append(frame)
-       
-       # Dead animation
+
+        # Dead animation
         dead_spritesheet = pygame.image.load(
             os.path.join(base_path, "Soldier/Soldier-Death.png")
         ).convert_alpha()
-    
-        for i in range(4):  # 4 dead frames
-            frame = dead_spritesheet.subsurface(pygame.Rect(i*frame_width + 40, 20, 20, 40))
-            self.animations["dead"].append(frame)
 
+        for i in range(4):  # 4 dead frames
+            frame = dead_spritesheet.subsurface(
+                pygame.Rect(i * frame_width + 40, 20, 20, 40)
+            )
+            self.animations["dead"].append(frame)
 
     def handle_note(self, note: Note) -> None:
         # self.is_stabbing = False
@@ -125,7 +128,7 @@ class Player(pygame.sprite.Sprite):
     #     print("Shield!")
     #     self.current_state = PlayerState.SHIELDING
     #     self.is_shielding = True
-        
+
     def update(self, platforms, enemies):
         # Horizontal movement
         self.rect.x += self.velocityx
@@ -160,13 +163,17 @@ class Player(pygame.sprite.Sprite):
         self.animation_timer += 1
         if self.animation_timer >= self.animation_speed:
             self.animation_timer = 0
-            self.current_frame = (self.current_frame + 1) % len(self.animations.get(self.get_animation_key(), [self.image])) # Fallback to the current image
+            self.current_frame = (self.current_frame + 1) % len(
+                self.animations.get(self.get_animation_key(), [self.image])
+            )  # Fallback to the current image
             # self.image = self.animations.get(self.get_animation_key(), [self.image])[self.current_frame] # Fallback to the current image
             # if random.choice([True, False]):
-            self.image = pygame.transform.scale(self.animations[self.get_animation_key()][self.current_frame], (60,100))
-                # self.image = self.animations[self.get_animation_key()][self.current_frame]
+            self.image = pygame.transform.scale(
+                self.animations[self.get_animation_key()][self.current_frame], (60, 100)
+            )
+            # self.image = self.animations[self.get_animation_key()][self.current_frame]
             # else:
-                # self.image.fill((0, 255, 0))
+            # self.image.fill((0, 255, 0))
             # Re-adjust rect size and position
             center = self.rect.center
             self.rect = self.image.get_rect()
@@ -186,7 +193,10 @@ class Player(pygame.sprite.Sprite):
     def get_animation_key(self):
         if self.current_state == PlayerState.STABBING:
             return "stabbing"
-        elif self.current_state == PlayerState.LEFT or self.current_state == PlayerState.RIGHT:
+        elif (
+            self.current_state == PlayerState.LEFT
+            or self.current_state == PlayerState.RIGHT
+        ):
             return "walking"
         elif self.current_state == PlayerState.DEAD:
             return "dead"
