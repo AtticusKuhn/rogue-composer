@@ -96,7 +96,7 @@ class Player(pygame.sprite.Sprite):
 
 
     def handle_note(self, note: Note) -> None:
-        self.is_stabbing = False
+        # self.is_stabbing = False
         # self.is_shielding = False
         if note == Note.C:
             self.jump(JUMP_POWER)

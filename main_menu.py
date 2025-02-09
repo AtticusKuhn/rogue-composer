@@ -35,7 +35,7 @@ class Button:
 def makeMenu(game_instance):
     buttons = []
     txts = ["Rogue Composer", "PLAY", "QUIT"]
-    funcs = [lambda _: 1, game_instance.run(), lambda _: 0]
+    funcs = [lambda _: 1, game_instance.run, lambda _: 0]
 
     gap = constants.SCREEN_HEIGHT // (len(txts) + 1)
     for indx, (txt, func) in enumerate(zip(txts, funcs)):
