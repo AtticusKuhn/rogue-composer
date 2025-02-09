@@ -26,7 +26,7 @@ class Button:
         self.func = func
 
     def drawButton(self, screen):
-        if not self.box:
+        if self.box:
             pygame.draw.rect(screen, constants.GREEN, self.rect, 6, 2)
         text = constants.BIG_TEXT_FONT.render(str(self.text), 1, constants.BLACK)
         size = constants.BIG_TEXT_FONT.size(str(self.text))
@@ -39,7 +39,7 @@ class Button:
 def makeMenu(game_instance):
     buttons = []
     txts = ["PLAY", "QUIT"]
-    funcs = [lambda: 1, game_instance.run, lambda: 0]
+    funcs = [game_instance.run, lambda: 0]
     buttons.append(
         Button(
             "Rogue Composer",
@@ -49,7 +49,7 @@ def makeMenu(game_instance):
             150,
             True,
             False,
-            func,
+            lambda: 1,
         )
     )
     gap = constants.SCREEN_HEIGHT // (len(txts) + 2)
@@ -73,7 +73,11 @@ def makeMenu(game_instance):
 def drawMenu(screen, background, buttons):
     # screen.fill(BLACK)
 
-    screen.blit(background, (0, 0))
+    # screen.blit(background, (0, 0))
+    screen.blit(
+        pygame.transform.scale(background, (constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT)),
+        (0, 0),
+    )
     for button in buttons:
         button.drawButton(screen)
 
