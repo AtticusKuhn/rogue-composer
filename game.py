@@ -137,11 +137,19 @@ class Game:
                 (0, 0),
             )
             # Draw player
-            self.screen.blit(self.player.image, self.player.rect)
+            if self.player.facing == "right":
+                self.screen.blit(self.player.image, self.player.rect)
+            else:
+                self.screen.blit(pygame.transform.flip(self.player.image,
+                                                       True, False), self.player.rect)
 
             # Draw enemies
             for enemy in self.enemies:
-                self.screen.blit(enemy.image, enemy.rect)
+                if enemy.facing == "right":
+                    self.screen.blit(enemy.image, enemy.rect)
+                
+                else:
+                    self.screen.blit(pygame.transform.flip(enemy.image, True, False), enemy.rect)
 
             # Draw platforms
             for platform in self.platforms:
