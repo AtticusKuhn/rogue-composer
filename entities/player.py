@@ -47,7 +47,7 @@ class Player(pygame.sprite.Sprite):
         # self.rect = self.image.get_rect(center=(100, 10))
     @property
     def is_stabbing(self):
-        return self
+        return self.current_state == PlayerState.STABBING
     def load_animations(self):
         base_path = "Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Characters(100x100)/Soldier/"
         frame_width = 100

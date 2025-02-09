@@ -36,6 +36,7 @@ class Enemy(pygame.sprite.Sprite):
             "idle": [],
             "walking": [],
             "stabbing": [],
+            "dead": []
         }
         self.load_animations()
         self.image = self.animations["idle"][0]
@@ -83,7 +84,14 @@ class Enemy(pygame.sprite.Sprite):
         for i in range(6):  # 3 stabbing frames
             frame = stabbing_spritesheet.subsurface(pygame.Rect(i*frame_width + 40, 20, 20, 40))
             self.animations["stabbing"].append(frame)
-
+       # Dead animation
+        dead_spritesheet = pygame.image.load(
+            os.path.join(base_path, "Orc-Death.png")
+        ).convert_alpha()
+    
+        for i in range(4):  # 4 dead frames
+            frame = dead_spritesheet.subsurface(pygame.Rect(i*frame_width + 40, 20, 20, 40))
+            self.animations["dead"].append(frame)
     def handle_note(self, note: Note):
         if self.state == EnemyState.STABBING:
             self.state = EnemyState.IDLE
@@ -126,6 +134,15 @@ class Enemy(pygame.sprite.Sprite):
             self.rect.bottom = hit.rect.top
                 # self.velocity = 0
             self.on_ground = True
+        player_hits = pygame.sprite.spritecollide(self, self.platforms, False)
+        for hit in player_hits:
+            # self.x_speed = 0
+            if self.x_speed > 0:
+                self.rect.left = hit.rect.right
+            else:
+                self.rect.right = hit.rect.left
+                # self.velocity = 0
+            # self.on_ground = True
             # elif self.velocity < 0:
             #     self.rect.top = hit.rect.bottom
                 # self.velocity = 0
@@ -146,6 +163,8 @@ class Enemy(pygame.sprite.Sprite):
             self.rect.center = center
           
     def get_animation_key(self):
+        if not self.health:
+            return "dead"
         if self.state == EnemyState.WALKING:
             return "walking"
         elif self.state == EnemyState.STABBING:
