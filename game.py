@@ -410,14 +410,26 @@ class Game:
                     self.game_state = GameState.PLAYING
 
     def _show_game_won_screen(self):
-        self.screen.fill((255, 255, 0))
-        string = "You Won"
+        # self.screen.fill((255, 255, 0))
+        # string = "You Won"
+        # text = BIG_TEXT_FONT.render(string, 1, BLACK)
+        # size = BIG_TEXT_FONT.size(string)
+        # x = 100 - size[0] // 2
+        # y = 100 - size[1] // 2
+
+        self.screen.blit(
+            pygame.transform.scale(
+                self.BACKGROUND_IMAGE, (SCREEN_WIDTH, SCREEN_HEIGHT)
+            ),
+            (0, 0),
+        )
+        string = "Congratulations!\nYou Won!\nThanks for Playing!"
         text = BIG_TEXT_FONT.render(string, 1, BLACK)
         size = BIG_TEXT_FONT.size(string)
-        x = 100 - size[0] // 2
-        y = 100 - size[1] // 2
-
+        x = SCREEN_WIDTH // 2 - size[0] // 2
+        y = SCREEN_HEIGHT // 2 - size[1] // 2
         self.screen.blit(text, (x, y))
+
 
     def run(self):
         while True:
